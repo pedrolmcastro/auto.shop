@@ -1,0 +1,17 @@
+[branch]
+allow_branch_names = ["main"]
+allow_branch_types = [
+  "chore",
+  "feat",
+  "fix",
+  "hotfix",
+  "release",
+]
+require_description_grammar = true
+
+[commit]
+ai_attribution = "disclose"
+allow_wip_commits = false
+
+[push]
+allow_force_push = false
