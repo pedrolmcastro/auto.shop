@@ -1,13 +1,12 @@
+---
 name: 'Semantic Pull Request'
-
-on:
+"on":
   pull_request_target:
     types:
       - edited
       - opened
       - reopened
       - synchronize
-
 jobs:
   semantic-pull-request:
     runs-on: ubuntu-slim
@@ -19,6 +18,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           subjectPattern: ^(?![A-Z]).+$
-          subjectPatternError: Pull request title "{title}" is invalid, subject "{subject}" must not start with an uppercase character
+          subjectPatternError: |
+            Pull request title "{title}" is invalid, subject "{subject}" must
+            not start with an uppercase character
           validateSingleCommit: true
           validateSingleCommitMatchesPrTitle: true

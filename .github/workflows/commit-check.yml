@@ -1,9 +1,8 @@
+---
 name: Commit Check
-
-on:
+"on":
   pull_request:
     branches: 'main'
-
 jobs:
   commit-check:
     runs-on: ubuntu-latest
