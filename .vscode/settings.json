@@ -1,4 +1,7 @@
 {
+  "files.associations": {
+    ".yamllint": "yaml"
+  },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
