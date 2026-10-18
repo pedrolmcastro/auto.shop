@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "github.vscode-github-actions",
+    "kuscamara.yamllint-fix",
+    "tamasfe.even-better-toml"
+  ]
+}
