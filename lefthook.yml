@@ -1,0 +1,31 @@
+---
+output: false
+commit-msg:
+  commands:
+    commit-check:
+      run: commit-check --message {1} --compact
+pre-commit:
+  commands:
+    commit-check:
+      run: commit-check --author-email --author-name --branch --compact
+    no-commit-to-main:
+      run: >-
+        [ "$(git symbolic-ref --quiet --short HEAD)" = "main" ]
+        && exit 1 || exit 0
+      fail_text: Commits directly on 'main' are not allowed
+    taplo-check:
+      glob: '*.toml'
+      run: RUST_LOG=warn taplo check {staged_files}
+    taplo-fmt:
+      glob: '*.toml'
+      run: RUST_LOG=warn taplo fmt --check {staged_files}
+    yamllint:
+      glob: '*.{yml,yaml}'
+      run: yamllint --strict {staged_files}
+    prettier:
+      glob: '*.json'
+      run: prettier --check {staged_files}
+pre-push:
+  commands:
+    commit-check:
+      run: commit-check --no-force-push --compact
