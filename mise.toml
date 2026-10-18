@@ -1,6 +1,6 @@
 [tools]
 lefthook = { version = "2.1.17", postinstall = "lefthook install" }
-node = "24"
+node = 24
 "npm:prettier" = "3.9.6"
 "pipx:commit-check" = "2.17.0"
 "pipx:yamlfix" = "1.19.1"
