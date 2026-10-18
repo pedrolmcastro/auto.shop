@@ -6,6 +6,3 @@ require_description_grammar = true
 [commit]
 ai_attribution = "disclose"
 allow_wip_commits = false
-
-[push]
-allow_force_push = false

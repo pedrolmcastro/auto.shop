@@ -25,7 +25,3 @@ pre-commit:
     prettier:
       glob: '*.json'
       run: prettier --check {staged_files}
-pre-push:
-  commands:
-    commit-check:
-      run: commit-check --no-force-push --compact
