@@ -1,4 +1,5 @@
 [tools]
+editorconfig-checker = "4.0.2"
 lefthook = { version = "2.1.17", postinstall = "lefthook install" }
 node = "24.22.0"
 "npm:prettier" = "3.9.6"
