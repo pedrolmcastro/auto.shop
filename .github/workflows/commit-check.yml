@@ -1,14 +1,10 @@
 ---
-name: Commit Check
-"on":
-  pull_request:
-    branches: 'main'
 jobs:
   commit-check:
-    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
@@ -19,3 +15,7 @@ jobs:
           author-name: true
           branch: true
           message: true
+name: Commit Check
+'on':
+  pull_request:
+    branches: main

@@ -1,3 +1,12 @@
 ---
 extends: default
-octal-values: true
+rules:
+  anchors:
+    forbid-duplicated-anchors: true
+    forbid-unused-anchors: true
+  empty-values: enable
+  key-ordering: enable
+  octal-values: enable
+  quoted-strings:
+    quote-type: single
+    required: only-when-needed
