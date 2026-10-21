@@ -1,30 +1,27 @@
 ---
 commit-msg:
   commands:
-    commit-check:
-      run: commit-check --message {1} --compact
+    lint-commit:
+      run: mise run lint:commit -- --message {1}
 output: false
 pre-commit:
   commands:
-    commit-check:
-      run: commit-check --author-email --author-name --branch --compact
-    editorconfig-checker:
-      run: editorconfig-checker {staged_files}
+    lint-commit:
+      run: mise run lint:commit -- --author-email --author-name --branch
+    lint-editorconfig:
+      run: mise run lint:editorconfig -- {staged_files}
+    lint-json:
+      glob: '*.json'
+      run: mise run lint:json -- {staged_files}
+    lint-toml:
+      glob: '*.toml'
+      run: mise run lint:toml -- {staged_files}
+    lint-yaml:
+      glob: '*.{yml,yaml}'
+      run: mise run lint:yaml -- {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
       run: >-
         [ "$(git symbolic-ref --quiet --short HEAD)" = "main" ]
         && exit 1
         || exit 0
-    prettier:
-      glob: '*.json'
-      run: prettier --check {staged_files}
-    taplo-check:
-      glob: '*.toml'
-      run: RUST_LOG=warn taplo check {staged_files}
-    taplo-fmt:
-      glob: '*.toml'
-      run: RUST_LOG=warn taplo fmt --check {staged_files}
-    yamllint:
-      glob: '*.{yml,yaml}'
-      run: yamllint --strict {staged_files}
