@@ -3,7 +3,7 @@
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
     "github.vscode-github-actions",
-    "kuscamara.yamllint-fix",
+    "redhat.vscode-yaml",
     "tamasfe.even-better-toml"
   ]
 }
