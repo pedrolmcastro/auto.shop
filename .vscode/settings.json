@@ -11,7 +11,4 @@
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
-  "[yaml]": {
-    "editor.defaultFormatter": "kuscamara.yamllint-fix"
-  }
 }
