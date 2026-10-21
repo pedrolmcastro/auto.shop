@@ -8,6 +8,8 @@ pre-commit:
   commands:
     commit-check:
       run: commit-check --author-email --author-name --branch --compact
+    editorconfig-checker:
+      run: editorconfig-checker {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
       run: >-
