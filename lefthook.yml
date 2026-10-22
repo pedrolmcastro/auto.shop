@@ -12,7 +12,9 @@ pre-commit:
     editorconfig-check:
       run: mise x -- editorconfig-checker {staged_files}
     jactionlint:
-      glob: .github/workflows/**/*.{yml,yaml}
+      glob:
+        - .github/actions/**/*.{yml,yaml}
+        - .github/workflows/**/*.{yml,yaml}
       run: mise x -- jactionlint --profile pedantic {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
