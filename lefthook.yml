@@ -1,27 +1,34 @@
 ---
 commit-msg:
   commands:
-    lint-commit:
-      run: mise run lint:commit -- --message {1}
+    commit-check:
+      run: mise x -- commit-check --compact --message {1}
 output: false
 pre-commit:
   commands:
-    lint-commit:
-      run: mise run lint:commit -- --author-email --author-name --branch
-    lint-editorconfig:
-      run: mise run lint:editorconfig -- {staged_files}
-    lint-json:
-      glob: '*.json'
-      run: mise run lint:json -- {staged_files}
-    lint-toml:
-      glob: '*.toml'
-      run: mise run lint:toml -- {staged_files}
-    lint-yaml:
-      glob: '*.{yml,yaml}'
-      run: mise run lint:yaml -- {staged_files}
+    commit-check:
+      run: |-
+        mise x -- commit-check --compact --author-email --author-name --branch
+    editorconfig-check:
+      run: mise x -- editorconfig-checker {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
       run: >-
         [ "$(git symbolic-ref --quiet --short HEAD)" = "main" ]
         && exit 1
         || exit 0
+    prettier:
+      glob: '*.json'
+      run: mise x -- prettier --log-level silent --check {staged_files}
+    taplo:
+      glob: '*.toml'
+      run: mise x -- RUST_LOG=warn taplo check {staged_files}
+    taplo-fmt:
+      glob: '*.toml'
+      run: mise x -- RUST_LOG=warn taplo fmt --check {staged_files}
+    yamllint:
+      glob:
+        - '*.{yml,yaml}'
+        - .yamllint
+      run: mise x -- yamllint --strict {staged_files}
+  parallel: true
