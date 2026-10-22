@@ -3,6 +3,7 @@ commit-msg:
   commands:
     commit-check:
       run: mise x -- commit-check --compact --message {1}
+glob_matcher: doublestar
 output: false
 pre-commit:
   commands:
@@ -18,17 +19,17 @@ pre-commit:
         && exit 1
         || exit 0
     prettier:
-      glob: '*.json'
+      glob: '**/*.json'
       run: mise x -- prettier --log-level silent --check {staged_files}
     taplo:
-      glob: '*.toml'
+      glob: '**/*.toml'
       run: mise x -- RUST_LOG=warn taplo check {staged_files}
     taplo-fmt:
-      glob: '*.toml'
+      glob: '**/*.toml'
       run: mise x -- RUST_LOG=warn taplo fmt --check {staged_files}
     yamllint:
       glob:
-        - '*.{yml,yaml}'
+        - '**/*.{yml,yaml}'
         - .yamllint
       run: mise x -- yamllint --strict {staged_files}
   parallel: true
