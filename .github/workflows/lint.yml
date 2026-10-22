@@ -7,7 +7,7 @@ defaults:
     shell: bash
 jobs:
   lint:
-    name: Lint
+    name: lint
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -37,6 +37,8 @@ jobs:
           json: true
       - if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
         uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          cache: true
       - env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.actions_all_changed_files }}
         if: ${{ steps.changed-files.outputs.actions_any_changed == 'true' }}
