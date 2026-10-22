@@ -8,25 +8,24 @@ output: false
 pre-commit:
   commands:
     commit-check:
-      run: |-
-        mise x -- commit-check --compact --author-email --author-name --branch
+      run: mise x -- commit-check --compact --author-email --author-name --branch
     editorconfig-check:
       run: mise x -- editorconfig-checker {staged_files}
+    jactionlint:
+      glob: .github/workflows/**/*.{yml,yaml}
+      run: mise x -- jactionlint --profile pedantic {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
-      run: >-
-        [ "$(git symbolic-ref --quiet --short HEAD)" = "main" ]
-        && exit 1
-        || exit 0
+      run: '[ "$(git symbolic-ref --quiet --short HEAD)" = "main" ] && exit 1 || exit 0'
     prettier:
       glob: '**/*.json'
       run: mise x -- prettier --log-level silent --check {staged_files}
     taplo:
       glob: '**/*.toml'
-      run: mise x -- RUST_LOG=warn taplo check {staged_files}
+      run: RUST_LOG=warn mise x -- taplo check {staged_files}
     taplo-fmt:
       glob: '**/*.toml'
-      run: mise x -- RUST_LOG=warn taplo fmt --check {staged_files}
+      run: RUST_LOG=warn mise x -- taplo fmt --check {staged_files}
     yamllint:
       glob:
         - '**/*.{yml,yaml}'
