@@ -1,0 +1,129 @@
+---
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  changed-files:
+    name: changed-files
+    outputs:
+      actions: ${{ steps.changed-files.outputs.actions_any_changed }}
+      actions_files: ${{ steps.changed-files.outputs.actions_all_changed_files }}
+      any: ${{ steps.changed-files.outputs.any_any_changed }}
+      any_files: ${{ steps.changed-files.outputs.any_all_changed_files }}
+      json: ${{ steps.changed-files.outputs.json_any_changed }}
+      json_files: ${{ steps.changed-files.outputs.json_all_changed_files }}
+      toml: ${{ steps.changed-files.outputs.toml_any_changed }}
+      toml_files: ${{ steps.changed-files.outputs.toml_all_changed_files }}
+      yaml: ${{ steps.changed-files.outputs.yaml_any_changed }}
+      yaml_files: ${{ steps.changed-files.outputs.yaml_all_changed_files }}
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: changed-files
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        with:
+          escape_json: false
+          files_yaml: |
+            actions:
+              - .github/actions/**/*.yml
+              - .github/actions/**/*.yaml
+              - .github/workflows/*.yml
+              - .github/workflows/*.yaml
+            any:
+              - '**'
+            json:
+              - '**/*.json'
+            toml:
+              - '**/*.toml'
+            yaml:
+              - '**/*.yaml'
+              - '**/*.yml'
+              - .yamllint
+          json: true
+          safe_output: false
+    timeout-minutes: 5
+  lint-actions:
+    if: ${{ needs.changed-files.outputs.actions == 'true' }}
+    name: lint-actions
+    needs: changed-files
+    runs-on: ubuntu-slim
+    steps:
+      - uses: $/.github/actions/setup-mise
+      - env:
+          CHANGED_FILES: ${{ needs.changed-files.outputs.actions_files }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          mise x -- jactionlint --profile pedantic -- "${files[@]}"
+    timeout-minutes: 5
+  lint-json:
+    if: ${{ needs.changed-files.outputs.json == 'true' }}
+    name: lint-json
+    needs: changed-files
+    runs-on: ubuntu-slim
+    steps:
+      - uses: $/.github/actions/setup-mise
+      - env:
+          CHANGED_FILES: ${{ needs.changed-files.outputs.json_files }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          mise x -- prettier --log-level silent --check "${files[@]}"
+    timeout-minutes: 5
+  lint-shared:
+    if: ${{ needs.changed-files.outputs.any == 'true' }}
+    name: lint-shared
+    needs: changed-files
+    runs-on: ubuntu-slim
+    steps:
+      - uses: $/.github/actions/setup-mise
+      - env:
+          CHANGED_FILES: ${{ needs.changed-files.outputs.any_files }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          mise x -- editorconfig-checker "${files[@]}"
+    timeout-minutes: 5
+  lint-toml:
+    if: ${{ needs.changed-files.outputs.toml == 'true' }}
+    name: lint-toml
+    needs: changed-files
+    runs-on: ubuntu-slim
+    steps:
+      - uses: $/.github/actions/setup-mise
+      - env:
+          CHANGED_FILES: ${{ needs.changed-files.outputs.toml_files }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          RUST_LOG=warn mise x -- taplo check -- "${files[@]}"
+          RUST_LOG=warn mise x -- taplo fmt --check -- "${files[@]}"
+    timeout-minutes: 5
+  lint-yaml:
+    if: ${{ needs.changed-files.outputs.yaml == 'true' }}
+    name: lint-yaml
+    needs: changed-files
+    runs-on: ubuntu-slim
+    steps:
+      - uses: $/.github/actions/setup-mise
+      - env:
+          CHANGED_FILES: ${{ needs.changed-files.outputs.yaml_files }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          mise x -- yamllint --strict "${files[@]}"
+    timeout-minutes: 5
+name: Lint
+'on':
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
