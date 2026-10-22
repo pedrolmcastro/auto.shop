@@ -6,19 +6,8 @@ defaults:
   run:
     shell: bash
 jobs:
-  changed-files:
-    name: changed-files
-    outputs:
-      actions: ${{ steps.changed-files.outputs.actions_any_changed }}
-      actions_files: ${{ steps.changed-files.outputs.actions_all_changed_files }}
-      any: ${{ steps.changed-files.outputs.any_any_changed }}
-      any_files: ${{ steps.changed-files.outputs.any_all_changed_files }}
-      json: ${{ steps.changed-files.outputs.json_any_changed }}
-      json_files: ${{ steps.changed-files.outputs.json_all_changed_files }}
-      toml: ${{ steps.changed-files.outputs.toml_any_changed }}
-      toml_files: ${{ steps.changed-files.outputs.toml_all_changed_files }}
-      yaml: ${{ steps.changed-files.outputs.yaml_any_changed }}
-      yaml_files: ${{ steps.changed-files.outputs.yaml_all_changed_files }}
+  lint:
+    name: Lint
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,74 +35,40 @@ jobs:
               - '**/*.yml'
               - .yamllint
           json: true
-          safe_output: false
-    timeout-minutes: 5
-  lint-actions:
-    if: ${{ needs.changed-files.outputs.actions == 'true' }}
-    name: lint-actions
-    needs: changed-files
-    runs-on: ubuntu-slim
-    steps:
-      - uses: $/.github/actions/setup-mise
+      - if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
       - env:
-          CHANGED_FILES: ${{ needs.changed-files.outputs.actions_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.actions_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.actions_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
           mise x -- jactionlint --profile pedantic -- "${files[@]}"
-    timeout-minutes: 5
-  lint-json:
-    if: ${{ needs.changed-files.outputs.json == 'true' }}
-    name: lint-json
-    needs: changed-files
-    runs-on: ubuntu-slim
-    steps:
-      - uses: $/.github/actions/setup-mise
       - env:
-          CHANGED_FILES: ${{ needs.changed-files.outputs.json_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.json_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.json_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
           mise x -- prettier --log-level silent --check "${files[@]}"
-    timeout-minutes: 5
-  lint-shared:
-    if: ${{ needs.changed-files.outputs.any == 'true' }}
-    name: lint-shared
-    needs: changed-files
-    runs-on: ubuntu-slim
-    steps:
-      - uses: $/.github/actions/setup-mise
       - env:
-          CHANGED_FILES: ${{ needs.changed-files.outputs.any_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.any_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
           mise x -- editorconfig-checker "${files[@]}"
-    timeout-minutes: 5
-  lint-toml:
-    if: ${{ needs.changed-files.outputs.toml == 'true' }}
-    name: lint-toml
-    needs: changed-files
-    runs-on: ubuntu-slim
-    steps:
-      - uses: $/.github/actions/setup-mise
       - env:
-          CHANGED_FILES: ${{ needs.changed-files.outputs.toml_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.toml_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.toml_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
           RUST_LOG=warn mise x -- taplo check -- "${files[@]}"
           RUST_LOG=warn mise x -- taplo fmt --check -- "${files[@]}"
-    timeout-minutes: 5
-  lint-yaml:
-    if: ${{ needs.changed-files.outputs.yaml == 'true' }}
-    name: lint-yaml
-    needs: changed-files
-    runs-on: ubuntu-slim
-    steps:
-      - uses: $/.github/actions/setup-mise
       - env:
-          CHANGED_FILES: ${{ needs.changed-files.outputs.yaml_files }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.yaml_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.yaml_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
