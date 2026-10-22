@@ -1,21 +1,27 @@
 ---
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
 jobs:
   commit-check:
-    permissions:
-      contents: read
-      pull-requests: read
-    runs-on: ubuntu-latest
+    name: commit-check
+    runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
-      - uses: commit-check/commit-check-action@v2
+          persist-credentials: false
+      - uses: commit-check/commit-check-action@2fe41833054c561710099d8e3e22bbeab4fe204a  # v2.5.0
         with:
           author-email: true
           author-name: true
           branch: true
           message: true
-name: Commit Check
+    timeout-minutes: 5
+name: commit-check
 'on':
   pull_request:
     branches: main
+permissions:
+  contents: read
+  pull-requests: read # Lists pull request's commits through the API to workaround shallow clones
