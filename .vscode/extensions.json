@@ -5,6 +5,8 @@
     "esbenp.prettier-vscode",
     "github.vscode-github-actions",
     "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-portuguese-brazilian",
     "tamasfe.even-better-toml",
     "zizmor.zizmor-vscode"
   ]
