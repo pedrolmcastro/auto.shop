@@ -43,6 +43,7 @@ depends = ["lint:toml:*"]
 run = '''yamllint --strict'''
 
 [tools]
+adr-tools = "3.0.0"
 editorconfig-checker = "4.0.2"
 jactionlint = "2.2.0"
 lefthook = { version = "2.1.17", postinstall = "lefthook install" }
