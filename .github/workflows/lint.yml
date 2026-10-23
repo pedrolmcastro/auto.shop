@@ -28,6 +28,8 @@ jobs:
               - '**'
             json:
               - '**/*.json'
+            markdown:
+              - '**/*.md'
             toml:
               - '**/*.toml'
             yaml:
@@ -47,6 +49,13 @@ jobs:
           mapfile -t files <<< "$files"
           mise x -- jactionlint --profile pedantic -- "${files[@]}"
       - env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.any_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
+        run: |
+          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          mapfile -t files <<< "$files"
+          mise x -- editorconfig-checker "${files[@]}"
+      - env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.json_all_changed_files }}
         if: ${{ steps.changed-files.outputs.json_any_changed == 'true' }}
         run: |
@@ -54,12 +63,12 @@ jobs:
           mapfile -t files <<< "$files"
           mise x -- prettier --log-level silent --check "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.any_all_changed_files }}
-        if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.markdown_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.markdown_any_changed == 'true' }}
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
-          mise x -- editorconfig-checker "${files[@]}"
+          mise x -- markdownlint-cli2 "${files[@]}"
       - env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.toml_all_changed_files }}
         if: ${{ steps.changed-files.outputs.toml_any_changed == 'true' }}

@@ -1,0 +1,33 @@
+---
+$schema: |
+  https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.24.0/schema/markdownlint-cli2-config-schema.json
+config:
+  code-block-style:
+    style: fenced
+  code-fence-style:
+    style: backtick
+  default: true
+  emphasis-style:
+    style: underscore
+  fenced-code-language:
+    language_only: true
+  heading-style:
+    style: atx
+  hr-style:
+    style: ---
+  line-length:
+    code_block_line_length: 120
+    heading_line_length: 120
+    line_length: 120
+    strict: true
+  ol-prefix:
+    style: ordered
+  strong-style:
+    style: asterisk
+  table-column-style:
+    aligned_delimiter: true
+    style: aligned
+  table-pipe-style:
+    style: leading_and_trailing
+  ul-style:
+    style: dash
