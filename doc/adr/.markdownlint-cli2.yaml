@@ -1,0 +1,25 @@
+---
+$schema: |
+  https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.24.0/schema/markdownlint-cli2-config-schema.json
+config:
+  extends: ../../.markdownlint-cli2.yaml
+  required-headings:
+    headings:
+      - '% ADR [0-9]+: .+'
+      - '## Contexto'
+      - '## Decisão'
+      - '### Justificativa'
+      - '### Consequências'
+      - '#### Positivas'
+      - '#### Negativas'
+      - '## Alternativas rejeitadas'
+      - ^
+      - '%%% [0-9]+: .+'
+      - ^
+    match_case: true
+overrides:
+  - combine: merge
+    config:
+      required-headings: false
+    filter:
+      - templates/template.md

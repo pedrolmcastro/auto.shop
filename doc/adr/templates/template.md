@@ -1,17 +1,41 @@
 # ADR NUMBER: TITLE
 
-- Autor:
+- Autor: TODO
 - Data: DATE
 - Status: STATUS
 
 ## Contexto
 
+TODO
+
 ## Decisão
 
-## Consequências
+TODO
 
-### Positivas
+### Justificativa
 
-### Negativas
+- TODO
 
-## Alternativas consideradas
+### Consequências
+
+#### Positivas
+
+- TODO
+
+#### Negativas
+
+- TODO
+
+## Alternativas rejeitadas
+
+### 1: TODO
+
+**Vantagens:**
+
+- TODO
+
+**Desvantagens:**
+
+- TODO
+
+**Justificativa da rejeição:** TODO
