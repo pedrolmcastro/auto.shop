@@ -1,5 +1,6 @@
 ---
 extends: default
+ignore-from-file: .gitignore
 rules:
   anchors:
     forbid-duplicated-anchors: true

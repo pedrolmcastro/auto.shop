@@ -31,5 +31,6 @@ config:
     style: leading_and_trailing
   ul-style:
     style: dash
+gitignore: true
 ignores:
   - LICENSE
