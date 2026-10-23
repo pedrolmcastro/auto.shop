@@ -54,6 +54,7 @@ jobs:
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
+          mise x -- cspell --no-progress "${files[@]}"
           mise x -- editorconfig-checker "${files[@]}"
       - env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.json_all_changed_files }}

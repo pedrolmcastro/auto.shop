@@ -9,6 +9,8 @@ pre-commit:
   commands:
     commit-check:
       run: mise x -- commit-check --compact --author-email --author-name --branch
+    cspell:
+      run: mise x -- cspell --no-progress {staged_files}
     editorconfig-check:
       run: mise x -- editorconfig-checker {staged_files}
     jactionlint:
