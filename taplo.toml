@@ -1,3 +1,5 @@
+exclude = ["node_modules/**"]
+
 [formatting]
 reorder_arrays = true
 reorder_keys = true
