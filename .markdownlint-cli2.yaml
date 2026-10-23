@@ -31,3 +31,5 @@ config:
     style: leading_and_trailing
   ul-style:
     style: dash
+ignores:
+  - LICENSE
