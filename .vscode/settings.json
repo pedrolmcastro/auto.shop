@@ -2,6 +2,7 @@
   "files.associations": {
     ".yamllint": "yaml"
   },
+  "gradle.nestedProjects": true,
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
