@@ -6,36 +6,49 @@
 
 ## Contexto
 
-É necessário desenvolver um novo sistema de gerenciamento de clientes, veículos, peças e serviços para uma oficina de
-médio porte. Inicialmente, será construído apenas um MVP da API, mas espera-se que essa implementação evolua e cresça
-futuramente e sustente o uso em produção. É necessário estabelecer o padrão arquitetural de alto nível a ser aplicado
+É necessário desenvolver um novo sistema integrado de atendimento e execução de serviços para a oficina. Atualmente, a
+oficina é de médio porte, mas há expectativa de grande crescimento com a implantação do sistema, dado que hoje o maior
+gargalo nas entregas é o gerenciamento desorganizado e muito manual. A estratégia de implementação é começar com o MVP
+do back-end da API REST HTTP, mas é esperado que essa implementação evolua e seja reutilizada no futuro em produção. O
+sistema deve suportar as seguintes funcionalidades desde o início:
+
+- Gerenciamento CRUD administrativo de clientes
+- Gerenciamento CRUD administrativo de veículos
+- Gerenciamento CRUD administrativo de peças e insumos
+- Controle administrativo de estoque de peças e insumos
+- Gerenciamento CRUD administrativo de serviços
+- Listagem administrativa de ordens de serviço
+- Cálculo automático do orçamento associado à ordem de serviço
+- Envio do orçamento para confirmação do cliente
+- Acompanhamento do status do serviço por parte do cliente
 
 ## Decisão
 
-Utilização de uma arquitetura monolítica modular
+Utilização de uma arquitetura monolítica modular. A divisão exata dos módulos está fora do escopo dessa ADR
 
 ### Justificativa
 
 - A entrega inicial de um MVP exige desenvolvimento rápido e com simplicidade operacional
 - A necessidade de evolução e a intenção de uso em produção requerem facilidade de manutenção futura
-- O porte da oficina pode ser atendido por um serviço único, sem necessidade de grande escalabilidade inicial
+- O volume atual de operações da oficina pode ser atendido por um serviço único e inicialmente escalado como unidade
+- A projeção de crescimento exige planejamento para a necessidade de escalabilidade maior no futuro
 - O time de desenvolvimento é pequeno e não requer deployment independente para ser ágil inicialmente
-- Os objetivos do projeto não fogem da normalidade e não requerem a aplicação de tecnologias muito especializadas
+- Os requisitos do sistema não justificam a necessidade de independência tecnológica entre módulos
 - Ferramentas de definição e validação de limites de módulos existem e são amplamente utilizadas no mercado
 
 ### Consequências
 
 #### Positivas
 
-- Organização estrutural clara
+- Organização estrutural clara com limites e contratos bem definidos
 - Simplicidade operacional para deployment, monitoramento e depuração
-- Comunicação entre módulos simples e performática
-- Permite migração futura gradual para microsserviços
+- Comunicação entre módulos simples, direta, sem chamadas de rede e com menor complexidade operacional
+- Limites e contratos explícitos podem reduzir o esforço de isolar módulos em microsserviços em caso de migração futura
 
 #### Negativas
 
-- Falhas podem facilmente afetar o sistema inteiro
-- Escalabilidade interdependente
+- Módulos compartilham um processo e recursos, então falhas não tratadas e picos de consumo podem afetar todo o sistema
+- O sistema inteiro é escalado como uma unidade
 - Deployment acoplado
 - Dependência tecnológica entre módulos
 - Requer planejamento prévio da arquitetura e dos contratos
@@ -58,7 +71,10 @@ Utilização de uma arquitetura monolítica modular
 - Manutenibilidade futura muito prejudicada
 - Difícil migração futura para monólitos modulares ou microsserviços
 
-**Justificativa da rejeição:** Grande penalidade na manutenibilidade futura e dificuldade de migração
+**Justificativa da rejeição:**
+
+- Grande penalidade na manutenibilidade futura
+- Dificuldade de migração
 
 ### 2: Arquitetura de microsserviços
 
@@ -77,4 +93,7 @@ Utilização de uma arquitetura monolítica modular
 - Complexidade operacional alta para deployment, monitoramento e depuração
 - Comunicação entre serviços complexa, sujeita a falhas e com penalidade de desempenho
 
-**Justificativa da rejeição:** Complexidade de implementação alta sem aplicação imediata das vantagens de escalabilidade
+**Justificativa da rejeição:**
+
+- Complexidade de implementação alta
+- Não há necessidade imediata de grande escalabilidade no MVP
