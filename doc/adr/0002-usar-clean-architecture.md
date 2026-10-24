@@ -6,8 +6,8 @@
 
 ## Contexto
 
-Dada a definição da [ADR 1](./0001-usar-arquitetura-monolitica-modular.md), resta definir se haverá ou não um padrão de
-estruturação de código dentro de cada módulo e, se sim, qual será
+Dada a definição da [ADR 1](./0001-usar-arquitetura-monolitica-modular.md), resta definir se haverá um padrão de
+estruturação de código dentro de cada módulo e, em caso afirmativo, qual será
 
 ## Decisão
 
@@ -22,11 +22,11 @@ Utilizar Clean Architecture dentro de cada módulo com a seguinte estrutura:
 
 ### Justificativa
 
-- Facilidade de compreensão entre módulos e colaboração devido à padronização
+- Facilidade de compreensão da estrutura dos módulos e de colaboração, devido à padronização
 - Familiaridade do time com o padrão
 - Facilidade no desenvolvimento de testes
-- Facilidade de migrações futuras
-- Manutenibilidade futura alta
+- Facilidade para realizar migrações futuras
+- Facilidade de manutenção a longo prazo
 - Já existe uma divisão "vertical" de funcionalidades com alta coesão nos módulos
 
 ### Consequências
@@ -36,7 +36,7 @@ Utilizar Clean Architecture dentro de cada módulo com a seguinte estrutura:
 - Mantém padronização entre diferentes módulos
 - Clareza na definição de regras de negócio e fluxos de caso de uso muito alta
 - Facilita o desenvolvimento de testes consistentes e independentes
-- Abertura para potenciais migrações de infraestrutura como de banco de dados ou suporte a um novo protocolo de API
+- Facilita possíveis migrações de banco de dados ou adoção de novos protocolos de API
 
 #### Negativas
 
@@ -59,9 +59,9 @@ Utilizar Clean Architecture dentro de cada módulo com a seguinte estrutura:
 
 - Dificuldade de compreensão devido à falta de padronização
 - Clareza na definição de regras de negócio e fluxos de caso de uso muito baixa
-- Alto risco de alto acoplamento completo
+- Alto risco de acoplamento
 - Dificuldade de desenvolvimento de testes consistentes e independentes
-- Manutenibilidade futura muito prejudicada
+- Facilidade de manutenção futura muito prejudicada
 
 **Justificativa da rejeição:** Alta penalidade na manutenibilidade futura e dificuldade de compreensão e colaboração
 
@@ -75,10 +75,10 @@ Utilizar Clean Architecture dentro de cada módulo com a seguinte estrutura:
 
 **Desvantagens:**
 
-- Risco de diluição e mescla de regras de negócio com lógica de infraestrutura diminuindo clareza
-- Alto risco de acoplamento entre lógicas de negócio e persistência no banco de dados
-- Dificuldade de isolamento de testes de regra de negócio com relação a camada de persistência
-- Dificuldade de migração de infraestrutura de base como banco de dados
+- Risco de diluição e mistura das regras de negócio com a lógica de infraestrutura, o que reduz a clareza
+- Alto risco de acoplamento entre a lógica de negócio e a persistência no banco de dados
+- Dificuldade para desenvolver testes de regras de negócio isolados da camada de persistência
+- Dificuldade para migrar componentes básicos da infraestrutura, como o banco de dados
 
 **Justificativa da rejeição:** Dificuldade de desenvolvimento de testes e alto acoplamento com o banco de dados
 
@@ -109,6 +109,6 @@ Utilizar Clean Architecture dentro de cada módulo com a seguinte estrutura:
 - Baixa familiaridade do time
 - Dificuldade de manter consistência de regras de negócio entre casos de uso diferentes
 - Alto risco de duplicação de código
-- Ganho de coesão tem um impacto atenuado devido à divisão pré-existente dos módulos coesos
+- O ganho de coesão tem impacto atenuado devido à divisão preexistente dos módulos, que já são coesos
 
 **Justificativa da rejeição:** Baixa familiaridade do time e baixa consistência de regras de negócio

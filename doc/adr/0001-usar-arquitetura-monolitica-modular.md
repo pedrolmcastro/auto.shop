@@ -7,8 +7,8 @@
 ## Contexto
 
 É necessário desenvolver um novo sistema de gerenciamento de clientes, veículos, peças e serviços para uma oficina de
-médio porte. Inicialmente será construído apenas uma MVP da API, mas é esperado que essa implementação futuramente se
-desenvolva e sustente o uso em produção. É necessário estabelecer o padrão arquitetural de alto nível a ser aplicado
+médio porte. Inicialmente, será construído apenas um MVP da API, mas espera-se que essa implementação evolua e cresça
+futuramente e sustente o uso em produção. É necessário estabelecer o padrão arquitetural de alto nível a ser aplicado
 
 ## Decisão
 
@@ -17,8 +17,8 @@ Utilização de uma arquitetura monolítica modular
 ### Justificativa
 
 - A entrega inicial de um MVP exige desenvolvimento rápido e com simplicidade operacional
-- A necessidade de evolução e intenção de uso em produção requerem fácil manutenibilidade futura
-- O porte da oficina pode ser comportado por um serviço único sem necessidade de grande escalabilidade inicial
+- A necessidade de evolução e a intenção de uso em produção requerem facilidade de manutenção futura
+- O porte da oficina pode ser atendido por um serviço único, sem necessidade de grande escalabilidade inicial
 - O time de desenvolvimento é pequeno e não requer deployment independente para ser ágil inicialmente
 - Os objetivos do projeto não fogem da normalidade e não requerem a aplicação de tecnologias muito especializadas
 - Ferramentas de definição e validação de limites de módulos existem e são amplamente utilizadas no mercado
@@ -75,6 +75,6 @@ Utilização de uma arquitetura monolítica modular
 
 - Complexidade de implementação alta
 - Complexidade operacional alta para deployment, monitoramento e depuração
-- Comunicação entre serviços complexa, sujeita a falhas e com penalidade de performance
+- Comunicação entre serviços complexa, sujeita a falhas e com penalidade de desempenho
 
 **Justificativa da rejeição:** Complexidade de implementação alta sem aplicação imediata das vantagens de escalabilidade
