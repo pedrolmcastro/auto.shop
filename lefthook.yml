@@ -11,7 +11,7 @@ pre-commit:
       run: mise x -- commit-check --compact --author-email --author-name --branch
     cspell:
       run: mise x -- cspell --no-progress {staged_files}
-    editorconfig-check:
+    editorconfig-checker:
       run: mise x -- editorconfig-checker {staged_files}
     jactionlint:
       glob:
@@ -26,7 +26,7 @@ pre-commit:
       run: '[ "$(git symbolic-ref --quiet --short HEAD)" = "main" ] && exit 1 || exit 0'
     prettier:
       glob: '**/*.json'
-      run: mise x -- prettier --log-level silent --check {staged_files}
+      run: mise x -- prettier --log-level warn --check {staged_files}
     taplo:
       glob: '**/*.toml'
       run: RUST_LOG=warn mise x -- taplo check {staged_files}

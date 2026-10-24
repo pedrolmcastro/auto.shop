@@ -62,7 +62,7 @@ jobs:
         run: |
           files=$(jq -er '.[]' <<< "$CHANGED_FILES")
           mapfile -t files <<< "$files"
-          mise x -- prettier --log-level silent --check "${files[@]}"
+          mise x -- prettier --log-level warn --check "${files[@]}"
       - env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.markdown_all_changed_files }}
         if: ${{ steps.changed-files.outputs.markdown_any_changed == 'true' }}
