@@ -16,9 +16,11 @@
     "jactionlint",
     "lefthook",
     "mapfile",
+    "Micronaut",
     "Moliner",
     "pipx",
     "redhat",
+    "SonarQube",
     "tamasfe",
     "taplo",
     "zizmor"
