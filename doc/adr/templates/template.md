@@ -38,4 +38,6 @@ TODO
 
 - TODO
 
-**Justificativa da rejeição:** TODO
+**Justificativa da rejeição:**
+
+- TODO
