@@ -1,5 +1,8 @@
 # Node
 node_modules/
 
+# SonarQube
+.sonar/
+
 # Others
 doc/tech-challenge.pdf
