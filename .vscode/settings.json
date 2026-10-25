@@ -5,6 +5,7 @@
   "gradle.nestedProjects": true,
   "java.checkstyle.version": "14.3.0",
   "java.checkstyle.configuration": "${workspaceFolder}/api/config/checkstyle/checkstyle.xml",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "java.format.settings.profile": "auto.shop Checkstyle",
   "java.format.settings.url": "api/config/formatter/java-formatter.xml",
   "[java]": {
