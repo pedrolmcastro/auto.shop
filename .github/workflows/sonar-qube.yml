@@ -25,8 +25,11 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       - env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        name: Build and analyze
-        run: ./gradlew build sonar --info
+        name: Build, analyze, and check Quality Gate
+        run: >-
+          ./gradlew build sonar --info
+          -Dsonar.qualitygate.wait=true
+          -Dsonar.qualitygate.timeout=300
         shell: bash
         working-directory: api
     timeout-minutes: 15
