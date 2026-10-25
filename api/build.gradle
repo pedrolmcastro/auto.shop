@@ -24,10 +24,19 @@ repositories {
 }
 
 dependencies {
+	compileOnly 'org.jspecify:jspecify:1.0.0'
 	errorprone 'com.google.errorprone:error_prone_core:2.48.0'
+	errorprone 'com.uber.nullaway:nullaway:0.14.1'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.errorprone {
+		check('NullAway', net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+		option('NullAway:AnnotatedPackages', 'shop.auto.api')
+	}
 }
 
 tasks.named('test') {

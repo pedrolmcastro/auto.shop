@@ -25,11 +25,13 @@
     "gradlew",
     "Initializr",
     "jactionlint",
+    "jspecify",
     "lefthook",
     "ltgt",
     "mapfile",
     "Micronaut",
     "Moliner",
+    "nullaway",
     "Parameterless",
     "pipx",
     "redhat",
@@ -37,6 +39,7 @@
     "SonarQube",
     "springframework",
     "taplo",
+    "uber",
     "zizmor"
   ]
 }
