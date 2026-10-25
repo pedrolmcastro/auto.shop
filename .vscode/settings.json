@@ -8,6 +8,10 @@
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.format.settings.profile": "auto.shop Checkstyle",
   "java.format.settings.url": "api/config/formatter/java-formatter.xml",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "pedrolmcastro",
+    "projectKey": "pedrolmcastro_auto.shop"
+  },
   "[java]": {
     "editor.defaultFormatter": "redhat.java",
     "editor.formatOnSave": true
