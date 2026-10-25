@@ -22,6 +22,8 @@
     "doublestar",
     "errorprone",
     "Finalizer",
+    "findsecbugs",
+    "github",
     "gradlew",
     "Initializr",
     "jactionlint",
@@ -37,9 +39,11 @@
     "redhat",
     "Sameline",
     "SonarQube",
+    "spotbugs",
     "springframework",
     "taplo",
     "uber",
+    "xstream",
     "zizmor"
   ]
 }
