@@ -1,50 +1,6 @@
 [hooks]
 postinstall = ["lefthook install", "npm install"]
 
-[tasks."fmt"]
-run = [{ task = "fmt:json", args = ["."] }, { task = "fmt:toml" }]
-
-[tasks."fmt:json"]
-run = '''prettier --log-level silent --write'''
-
-[tasks."fmt:toml"]
-run = '''taplo fmt'''
-
-[tasks."lint"]
-run = [
-  { task = "lint:json", args = [
-    ".",
-  ] },
-  { task = "lint:yaml", args = [
-    ".",
-  ] },
-  { tasks = [
-    "lint:editorconfig",
-    "lint:toml",
-  ] },
-]
-
-[tasks."lint:commit"]
-run = "commit-check --compact"
-
-[tasks."lint:editorconfig"]
-run = "editorconfig-checker"
-
-[tasks."lint:json"]
-run = '''prettier --log-level silent --check'''
-
-[tasks."lint:toml:check"]
-run = '''RUST_LOG=warn taplo check'''
-
-[tasks."lint:toml:fmt"]
-run = '''RUST_LOG=warn taplo fmt --check'''
-
-[tasks."lint:toml"]
-depends = ["lint:toml:*"]
-
-[tasks."lint:yaml"]
-run = '''yamllint --strict'''
-
 [tools]
 adr-tools = "3.0.0"
 editorconfig-checker = "4.0.2"
