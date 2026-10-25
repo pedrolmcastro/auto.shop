@@ -17,8 +17,26 @@ dependencies {
     errorprone 'com.uber.nullaway:nullaway:0.14.1'
     implementation 'org.springframework.boot:spring-boot-starter'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'net.minidev', module: 'json-smart'
+    }
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (it.requested.group == 'com.google.guava' && it.requested.name == 'guava') {
+            it.useVersion '33.7.2-jre'
+            it.because 'Fixes CVE-2026-102554'
+        }
+        if (
+            it.requested.group == 'ch.qos.logback' &&
+            (it.requested.name == 'logback-classic' || it.requested.name == 'logback-core')
+        ) {
+            it.useVersion '1.6.5'
+            it.because 'Fixes CVE-2026-104721'
+        }
+    }
 }
 
 repositories {
