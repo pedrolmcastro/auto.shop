@@ -7,8 +7,8 @@ defaults:
     shell: bash
     working-directory: api
 jobs:
-  build:
-    name: Build
+  build-api:
+    name: build-api
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,7 +31,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         name: Run checks
         run: |
-          args=(check)
+          args=(check jacocoTestReport)
           if [[ -n "$SONAR_TOKEN" ]]; then
             args+=(sonar -Dsonar.qualitygate.timeout=300 -Dsonar.qualitygate.wait=true)
             if [[ "$GITHUB_EVENT_NAME" == 'pull_request' ]]; then

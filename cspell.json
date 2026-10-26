@@ -29,6 +29,7 @@
     "github",
     "gradlew",
     "Initializr",
+    "jacoco",
     "jactionlint",
     "jayway",
     "jspecify",
