@@ -32,6 +32,8 @@ jobs:
               - '**/*.md'
             toml:
               - '**/*.toml'
+            xml:
+              - '**/*.xml'
             yaml:
               - '**/*.yaml'
               - '**/*.yml'
@@ -42,49 +44,56 @@ jobs:
         with:
           cache: true
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.actions_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.actions_all_changed_files }}
         if: ${{ steps.changed-files.outputs.actions_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          mise x -- jactionlint --profile pedantic -- "${files[@]}"
+          jactionlint --profile pedantic -- "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.any_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.any_all_changed_files }}
         if: ${{ steps.changed-files.outputs.any_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          mise x -- cspell --no-progress "${files[@]}"
-          mise x -- editorconfig-checker "${files[@]}"
+          cspell --no-progress "${files[@]}"
+          editorconfig-checker "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.json_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.json_all_changed_files }}
         if: ${{ steps.changed-files.outputs.json_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          mise x -- prettier --log-level warn --check "${files[@]}"
+          prettier --log-level warn --check "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.markdown_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.markdown_all_changed_files }}
         if: ${{ steps.changed-files.outputs.markdown_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          mise x -- markdownlint-cli2 "${files[@]}"
+          markdownlint-cli2 "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.toml_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.toml_all_changed_files }}
         if: ${{ steps.changed-files.outputs.toml_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          RUST_LOG=warn mise x -- taplo check -- "${files[@]}"
-          RUST_LOG=warn mise x -- taplo fmt --check -- "${files[@]}"
+          RUST_LOG=warn taplo check -- "${files[@]}"
+          RUST_LOG=warn taplo fmt --check -- "${files[@]}"
       - env:
-          CHANGED_FILES: ${{ steps.changed-files.outputs.yaml_all_changed_files }}
+          FILES: ${{ steps.changed-files.outputs.xml_all_changed_files }}
+        if: ${{ steps.changed-files.outputs.xml_any_changed == 'true' }}
+        run: |
+          files=$(jq -er '.[]' <<< "$FILES")
+          mapfile -t files <<< "$files"
+          xmllint --noout "${files[@]}"
+      - env:
+          FILES: ${{ steps.changed-files.outputs.yaml_all_changed_files }}
         if: ${{ steps.changed-files.outputs.yaml_any_changed == 'true' }}
         run: |
-          files=$(jq -er '.[]' <<< "$CHANGED_FILES")
+          files=$(jq -er '.[]' <<< "$FILES")
           mapfile -t files <<< "$files"
-          mise x -- yamllint --strict "${files[@]}"
+          yamllint --strict "${files[@]}"
     timeout-minutes: 5
 name: Lint
 'on':
