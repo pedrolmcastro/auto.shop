@@ -11,6 +11,18 @@ plugins {
 group = 'shop.auto'
 version = '0.0.1-SNAPSHOT'
 
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
 dependencies {
     compileOnly 'org.jspecify:jspecify:1.0.0'
     errorprone 'com.google.errorprone:error_prone_core:2.48.0'
@@ -71,8 +83,20 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-tasks.named('test') {
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.register('integrationTest', Test) {
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    description = 'Runs integration tests.'
+    group = 'verification'
+    shouldRunAfter tasks.named('test')
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('integrationTest')
 }
 
 tasks.named('bootJar') {
