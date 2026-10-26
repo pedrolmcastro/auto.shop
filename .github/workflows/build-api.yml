@@ -8,6 +8,8 @@ defaults:
     working-directory: api
 jobs:
   build-api:
+    env:
+      CONTAINER: checks-${{ github.run_id }}-${{ github.run_attempt }}
     name: build-api
     runs-on: ubuntu-24.04
     steps:
@@ -45,10 +47,29 @@ jobs:
           docker compose run \
             --build \
             --env SONAR_TOKEN \
+            --name "$CONTAINER" \
             --no-deps \
-            --rm \
             --volume "$GITHUB_WORKSPACE/.git:/workspace/.git:ro" \
             checks "${args[@]}" --info
+      - id: reports
+        if: ${{ !cancelled() }}
+        name: Export reports
+        run: |
+          DIR="$RUNNER_TEMP/reports"
+          echo "path=$DIR" >> "$GITHUB_OUTPUT"
+          if docker container inspect "$CONTAINER" > /dev/null 2>&1; then
+            mkdir -p "$DIR"
+            docker cp "$CONTAINER:/workspace/api/build/reports" "$DIR/" || true
+            docker cp "$CONTAINER:/workspace/api/build/test-results" "$DIR/" || true
+          fi
+      - if: ${{ !cancelled() }}
+        name: Upload reports
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          if-no-files-found: warn
+          name: reports
+          path: ${{ steps.reports.outputs.path }}
+          retention-days: 7
       - name: Build
         run: docker compose build app
       - env:
