@@ -2,6 +2,7 @@ plugins {
     id 'checkstyle'
     id 'com.github.spotbugs' version '6.5.13'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
     id 'java'
     id 'net.ltgt.errorprone' version '5.1.1'
     id "org.sonarqube" version "7.5.0.8588"
@@ -65,10 +66,15 @@ java {
     }
 }
 
+jacoco {
+    toolVersion = '0.8.16'
+}
+
 sonar {
   properties {
     property "sonar.organization", "pedrolmcastro"
     property "sonar.projectKey", "pedrolmcastro_auto.shop"
+    property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml').get().asFile.absolutePath
   }
 }
 
@@ -95,10 +101,24 @@ tasks.register('integrationTest', Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
 }
 
-tasks.named('check') {
-    dependsOn tasks.named('integrationTest')
-}
-
 tasks.named('bootJar') {
     archiveFileName = 'app.jar'
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('integrationTest')
+    dependsOn tasks.named('jacocoTestReport')
+}
+
+tasks.named('jacocoTestReport', JacocoReport) {
+    dependsOn tasks.named('test'), tasks.named('integrationTest')
+    executionData tasks.named('test').get(), tasks.named('integrationTest').get()
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}
+
+tasks.named('sonar') {
+    dependsOn tasks.named('jacocoTestReport')
 }
