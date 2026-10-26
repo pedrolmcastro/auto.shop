@@ -1,13 +1,15 @@
 {
   "recommendations": [
     "davidanson.vscode-markdownlint",
+    "docker.docker",
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
     "github.vscode-github-actions",
+    "ms-azuretools.vscode-containers",
     "redhat.java",
+    "redhat.vscode-yaml",
     "shengchen.vscode-checkstyle",
     "sonarsource.sonarlint-vscode",
-    "redhat.vscode-yaml",
     "streetsidesoftware.code-spell-checker",
     "streetsidesoftware.code-spell-checker-portuguese-brazilian",
     "tamasfe.even-better-toml",

@@ -14,8 +14,10 @@
   "words": [
     "amannn",
     "Atclause",
+    "buildx",
     "classpath",
     "codegen",
+    "connrefused",
     "corretude",
     "davidanson",
     "dists",
@@ -41,6 +43,7 @@
     "Parameterless",
     "pedrolmcastro",
     "pipx",
+    "pullrequest",
     "qualitygate",
     "redhat",
     "Sameline",
@@ -49,7 +52,9 @@
     "spotbugs",
     "springframework",
     "taplo",
+    "temurin",
     "uber",
+    "webmvc",
     "xstream",
     "zizmor"
   ]

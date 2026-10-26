@@ -1,0 +1,86 @@
+---
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+defaults:
+  run:
+    shell: bash
+    working-directory: api
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - env:
+          MISE_NO_HOOKS: '1'
+        name: Set up Docker
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          cache: true
+          install_args: docker-cli docker-compose github:docker/buildx
+      - name: Validate Docker
+        run: docker compose --profile quality config --quiet
+      - env:
+          PR_BASE: ${{ github.base_ref }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        name: Run checks
+        run: |
+          args=(check)
+          if [[ -n "$SONAR_TOKEN" ]]; then
+            args+=(sonar -Dsonar.qualitygate.timeout=300 -Dsonar.qualitygate.wait=true)
+            if [[ "$GITHUB_EVENT_NAME" == 'pull_request' ]]; then
+              args+=(
+                "-Dsonar.pullrequest.base=$PR_BASE"
+                "-Dsonar.pullrequest.branch=$PR_BRANCH"
+                "-Dsonar.pullrequest.key=$PR_NUMBER"
+              )
+            fi
+          fi
+          docker compose run \
+            --build \
+            --env SONAR_TOKEN \
+            --no-deps \
+            --rm \
+            --volume "$GITHUB_WORKSPACE/.git:/workspace/.git:ro" \
+            checks "${args[@]}" --info
+      - name: Build
+        run: docker compose build app
+      - env:
+          PORT: '8080'
+        name: Smoke test
+        run: |
+          docker compose up --detach --no-build app
+          status=$(curl \
+            --max-time 2 \
+            --output /dev/null \
+            --retry 30 \
+            --retry-all-errors \
+            --retry-delay 2 \
+            --retry-max-time 60 \
+            --show-error \
+            --silent \
+            --write-out '%{http_code}' \
+            "http://127.0.0.1:${PORT}/")
+          test "$status" -ge 200 && test "$status" -lt 500
+        timeout-minutes: 2
+      - if: ${{ always() }}
+        name: Clean up
+        run: |
+          docker compose logs app
+          docker compose --profile quality down --volumes --remove-orphans
+    timeout-minutes: 30
+name: Build API
+'on':
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+permissions:
+  contents: read
