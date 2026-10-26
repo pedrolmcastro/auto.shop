@@ -1,5 +1,6 @@
 exclude = ["node_modules/**"]
 
 [formatting]
+indent_string = "  "
 reorder_arrays = true
 reorder_keys = true
