@@ -11,7 +11,7 @@ pre-commit:
     commit-check:
       run: commit-check --compact --author-email --author-name --branch
     cspell:
-      run: cspell --no-progress {staged_files}
+      run: cspell --no-must-find-files --no-progress {staged_files}
     editorconfig-checker:
       run: editorconfig-checker {staged_files}
     jactionlint:
