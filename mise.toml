@@ -11,6 +11,7 @@ usage = 'arg "<plugin>"; arg "<binary>"'
 
 [tools]
 adr-tools = "3.0.0"
+"conda:libxml2" = "2.15.4"
 docker-cli = "29.9.2"
 editorconfig-checker = "4.0.2"
 jactionlint = "2.2.0"

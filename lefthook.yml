@@ -2,40 +2,44 @@
 commit-msg:
   commands:
     commit-check:
-      run: mise x -- commit-check --compact --message {1}
+      run: commit-check --compact --message {1}
 glob_matcher: doublestar
+lefthook: mise x -- lefthook
 output: false
 pre-commit:
   commands:
     commit-check:
-      run: mise x -- commit-check --compact --author-email --author-name --branch
+      run: commit-check --compact --author-email --author-name --branch
     cspell:
-      run: mise x -- cspell --no-progress {staged_files}
+      run: cspell --no-progress {staged_files}
     editorconfig-checker:
-      run: mise x -- editorconfig-checker {staged_files}
+      run: editorconfig-checker {staged_files}
     jactionlint:
       glob:
         - .github/actions/**/*.{yml,yaml}
         - .github/workflows/**/*.{yml,yaml}
-      run: mise x -- jactionlint --profile pedantic {staged_files}
+      run: jactionlint --profile pedantic {staged_files}
     markdownlint-cli2:
       glob: '**/*.md'
-      run: mise x -- markdownlint-cli2 {staged_files}
+      run: markdownlint-cli2 {staged_files}
     no-commit-to-main:
       fail_text: Commits directly on 'main' are not allowed
       run: '[ "$(git symbolic-ref --quiet --short HEAD)" = "main" ] && exit 1 || exit 0'
     prettier:
       glob: '**/*.json'
-      run: mise x -- prettier --log-level warn --check {staged_files}
+      run: prettier --log-level warn --check {staged_files}
     taplo:
       glob: '**/*.toml'
-      run: RUST_LOG=warn mise x -- taplo check {staged_files}
+      run: RUST_LOG=warn taplo check {staged_files}
     taplo-fmt:
       glob: '**/*.toml'
-      run: RUST_LOG=warn mise x -- taplo fmt --check {staged_files}
+      run: RUST_LOG=warn taplo fmt --check {staged_files}
+    xmllint:
+      glob: '**/*.xml'
+      run: xmllint --noout {staged_files}
     yamllint:
       glob:
         - '**/*.{yml,yaml}'
         - .yamllint
-      run: mise x -- yamllint --strict {staged_files}
+      run: yamllint --strict {staged_files}
   parallel: true
