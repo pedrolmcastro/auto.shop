@@ -74,6 +74,7 @@ sonar {
   properties {
     property "sonar.organization", "pedrolmcastro"
     property "sonar.projectKey", "pedrolmcastro_auto.shop"
+    property "sonar.projectName", "api.auto.shop"
     property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml').get().asFile.absolutePath
   }
 }
