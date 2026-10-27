@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "coderabbit.coderabbit-vscode",
+    "codescene.codescene-vscode",
     "davidanson.vscode-markdownlint",
     "docker.docker",
     "editorconfig.editorconfig",
