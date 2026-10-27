@@ -32,6 +32,7 @@ dependencies {
     implementation 'com.github.f4b6a3:uuid-creator:6.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
+    testImplementation 'com.tngtech.archunit:archunit-junit6:1.5.1'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'net.minidev', module: 'json-smart'
     }

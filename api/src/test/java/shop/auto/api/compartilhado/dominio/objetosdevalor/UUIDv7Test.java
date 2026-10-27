@@ -32,20 +32,18 @@ public final class UUIDv7Test {
         @EnumSource(mode = EnumSource.Mode.EXCLUDE, names = "VARIANT_STANDARD", value = UuidVariant.class)
         void deveRejeitarVarianteDiferente(final UuidVariant variante) {
             final var valor = new UUID(0x7000L, (long) variante.getValue() << 61);
-            assertThatThrownBy(() -> new UUIDv7(valor)).isExactlyInstanceOf(VarianteInvalidaException.class).hasMessage(
-                "UUIDv7 deve ter variante 2 mas tem %d",
-                variante.getValue()
-            );
+            assertThatThrownBy(() -> new UUIDv7(valor))
+                .isExactlyInstanceOf(VarianteInvalidaException.class)
+                .hasMessage("UUIDv7 deve ter variante 2 mas tem %d", variante.getValue());
         }
 
         @ParameterizedTest
         @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15 })
         void deveRejeitarVersaoDiferente(final int versao) {
             final var valor = new UUID((long) versao << 12, Long.MIN_VALUE);
-            assertThatThrownBy(() -> new UUIDv7(valor)).isExactlyInstanceOf(VersaoInvalidaException.class).hasMessage(
-                "UUIDv7 deve ter versão 7 mas tem versão %d",
-                versao
-            );
+            assertThatThrownBy(() -> new UUIDv7(valor))
+                .isExactlyInstanceOf(VersaoInvalidaException.class)
+                .hasMessage("UUIDv7 deve ter versão 7 mas tem versão %d", versao);
         }
     }
 
