@@ -5,11 +5,9 @@
 
 <module name="Checker">
     <module name="FileTabCharacter"/>
-    <module name="LineEnding"/>
     <module name="LineLength">
         <property name="max" value="120"/>
     </module>
-    <module name="NewlineAtEndOfFile"/>
     <module name="OrderedProperties"/>
     <module name="Translation"/>
     <module name="TreeWalker">
@@ -19,7 +17,6 @@
         <module name="AnnotationUseStyle">
             <property name="elementStyle" value="expanded"/>
         </module>
-        <module name="ArrayBracketNoWhitespace"/>
         <module name="ArrayTrailingComma">
             <property name="alwaysDemandTrailingComma" value="true"/>
         </module>
@@ -30,7 +27,6 @@
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="AvoidStarImport"/>
         <module name="ClassMemberImpliedModifier"/>
-        <module name="CommentsIndentation"/>
         <module name="ConstructorsDeclarationGrouping">
             <property name="orderByIncreasingParameterCount" value="true"/>
         </module>
@@ -38,8 +34,6 @@
         <module name="DeclarationOrder"/>
         <module name="DefaultComesLast"/>
         <module name="EmptyBlock"/>
-        <module name="EmptyForInitializerPad"/>
-        <module name="EmptyForIteratorPad"/>
         <module name="EqualsAvoidNull"/>
         <module name="ExpressionOverBlockLambda"/>
         <module name="FallThrough"/>
@@ -48,27 +42,18 @@
             <property name="validateEnhancedForLoopVariable" value="true"/>
         </module>
         <module name="FinalParameters"/>
-        <module name="GenericWhitespace"/>
         <module name="HexLiteralCase"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="ImportOrder"/>
-        <module name="Indentation"/>
         <module name="InterfaceMemberImpliedModifier"/>
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocBlockTagLocation"/>
-        <module name="JavadocEndCommentDelimiter"/>
-        <module name="JavadocLeadingAsteriskAlign"/>
         <module name="JavadocLinkFirstOccurrence"/>
         <module name="JavadocLinkWellKnownApi"/>
-        <module name="JavadocMissingLeadingAsterisk"/>
-        <module name="JavadocMissingWhitespaceAfterAsterisk"/>
         <module name="JavadocNoErrorInThrowsTag"/>
         <module name="JavadocParamOrder"/>
         <module name="JavadocSeeTagOrder"/>
         <module name="JavadocThrowsOrder"/>
-        <module name="LeftCurly">
-            <property name="ignoreEnums" value="false"/>
-        </module>
         <module name="MissingNullCaseInSwitch"/>
         <module name="ModifiedControlVariable"/>
         <module name="ModuleDirectiveOrder"/>
@@ -79,38 +64,24 @@
         <module name="NoClone"/>
         <module name="NoCodeInFile"/>
         <module name="NoFinalizer"/>
-        <module name="NoWhitespaceBeforeCaseDefaultColon"/>
         <module name="NonEmptyAtclauseDescription"/>
         <module name="NumericalPrefixesInfixesSuffixesCharacterCase"/>
-        <module name="OneStatementPerLine"/>
         <module name="OneTopLevelClass"/>
         <module name="OpenjdkAnnotationLocation"/>
-        <module name="OperatorWrap"/>
         <module name="OuterTypeFilename"/>
         <module name="OuterTypeNumber"/>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="PackageDeclaration"/>
         <module name="ParameterAssignment"/>
-        <module name="ParenPad"/>
         <module name="PatternVariableAssignment"/>
         <module name="PreferCodeOrSnippetJavadocInlineTag"/>
         <module name="PreferLiteralJavadocInlineTag"/>
         <module name="RedundantImport"/>
         <module name="RequireThis"/>
-        <module name="RightCurly"/>
         <module name="SealedShouldHavePermitsList"/>
-        <module name="SeparatorWrap">
-            <property name="option" value="nl"/>
-        </module>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
-        <module name="SingleSpaceSeparator"/>
         <module name="TodoComment"/>
-        <module name="TypeBodyPadding">
-            <property name="atEndOfBody" value="false"/>
-            <property name="atStartOfBody" value="false"/>
-        </module>
-        <module name="TypecastParenPad"/>
         <module name="UnnecessaryFullyQualifiedType"/>
         <module name="UnnecessaryNullCheckWithInstanceOf"/>
         <module name="UnnecessaryParentheses"/>
@@ -126,15 +97,6 @@
         <module name="UpperEll"/>
         <module name="UseEnhancedSwitch"/>
         <module name="WhenShouldBeUsed"/>
-        <module name="WhitespaceAround">
-            <property name="allowEmptyCatches" value="true"/>
-            <property name="allowEmptyConstructors" value="true"/>
-            <property name="allowEmptyLambdas" value="true"/>
-            <property name="allowEmptyLoops" value="true"/>
-            <property name="allowEmptyMethods" value="true"/>
-            <property name="allowEmptySwitchBlockStatements" value="true"/>
-            <property name="allowEmptyTypes" value="true"/>
-        </module>
     </module>
     <module name="UniqueProperties"/>
 </module>
