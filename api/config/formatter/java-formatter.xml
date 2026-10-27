@@ -3,6 +3,7 @@
     <profile kind="CodeFormatterProfile" name="auto.shop Checkstyle" version="21">
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_explicit_constructor_call" value="48"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="48"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="48"/>
         <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_last_class_body_declaration" value="-1"/>
         <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration" value="-1"/>
         <setting id="org.eclipse.jdt.core.formatter.blank_lines_between_import_groups" value="-1"/>
