@@ -78,13 +78,13 @@
         <module name="PreferLiteralJavadocInlineTag"/>
         <module name="RedundantImport"/>
         <module name="RequireThis"/>
-        <module name="SealedShouldHavePermitsList"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="TodoComment"/>
         <module name="UnnecessaryFullyQualifiedType"/>
         <module name="UnnecessaryNullCheckWithInstanceOf"/>
         <module name="UnnecessaryParentheses"/>
+        <module name="UnnecessaryPermitsClause"/>
         <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
         <module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
         <module name="UnnecessarySemicolonInEnumeration"/>
