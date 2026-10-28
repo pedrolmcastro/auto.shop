@@ -12,6 +12,9 @@ public final class ArquiteturaTest {
     @ArchTest
     public static final ArchTests OBJETOS_DE_VALOR = ArchTests.in(ObjetosDeValor.class);
 
+    @ArchTest
+    public static final ArchTests UTILITARIOS = ArchTests.in(Utilitarios.class);
+
     private ArquiteturaTest() {}
 
     public static final class ObjetosDeValor {
@@ -24,6 +27,20 @@ public final class ArquiteturaTest {
                 .dependOnClassesThat()
                 .resideInAPackage("..dominio.entidades..")
                 .because("Objetos de valor devem ser independentes de entidades")
+                .check(classes);
+        }
+    }
+
+    public static final class Utilitarios {
+        @ArchTest
+        static void naoDevemDependerDoDominio(final JavaClasses classes) {
+            noClasses()
+                .that()
+                .resideInAPackage("..utilitarios..")
+                .should()
+                .dependOnClassesThat()
+                .resideInAPackage("..dominio..")
+                .because("Funções utilitárias não devem depender do domínio")
                 .check(classes);
         }
     }
