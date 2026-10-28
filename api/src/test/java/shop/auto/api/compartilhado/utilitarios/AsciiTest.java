@@ -7,31 +7,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AsciiTest {
     @Nested
-    public final class ELetra {
+    public final class ELetraMinuscula {
         @ParameterizedTest
-        @ValueSource(ints = { '\0', '\n', ' ', '0', '.', '_', 0x007F, -1, Integer.MAX_VALUE })
-        void deveSerFalsoQuandoNaoForLetra(final int pontoDeCodigo) {
-            assertThat(Ascii.eLetra(pontoDeCodigo)).isFalse();
+        @ValueSource(chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+            'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' })
+        void deveSerFalsoQuandoForLetraAsciiMaiuscula(final char letra) {
+            assertThat(Ascii.eLetraMinuscula(letra)).isFalse();
         }
 
         @ParameterizedTest
         @ValueSource(ints = { 'Á', 'á', 'Ç', 'ç', 'Ω', 'Ａ', 'ａ' })
         void deveSerFalsoQuandoForLetraNaoAscii(final int pontoDeCodigo) {
-            assertThat(Ascii.eLetra(pontoDeCodigo)).isFalse();
+            assertThat(Ascii.eLetraMinuscula(pontoDeCodigo)).isFalse();
         }
 
         @ParameterizedTest
-        @ValueSource(chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-            'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' })
-        void deveSerVerdadeiroQuandoForLetraAsciiMaiuscula(final char letra) {
-            assertThat(Ascii.eLetra(letra)).isTrue();
+        @ValueSource(ints = { '\0', '\n', ' ', '0', '.', '_', 0x007F, -1, Integer.MAX_VALUE })
+        void deveSerFalsoQuandoNaoForLetra(final int pontoDeCodigo) {
+            assertThat(Ascii.eLetraMinuscula(pontoDeCodigo)).isFalse();
         }
 
         @ParameterizedTest
         @ValueSource(chars = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
             's', 't', 'u', 'v', 'w', 'x', 'y', 'z' })
         void deveSerVerdadeiroQuandoForLetraAsciiMinuscula(final char letra) {
-            assertThat(Ascii.eLetra(letra)).isTrue();
+            assertThat(Ascii.eLetraMinuscula(letra)).isTrue();
         }
     }
 }
