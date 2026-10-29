@@ -4,7 +4,7 @@ import com.password4j.SecureString;
 import java.nio.CharBuffer;
 import java.util.Arrays;
 import java.util.HexFormat;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import org.jspecify.annotations.Nullable;
 
@@ -35,17 +35,17 @@ public final class Pepper implements AutoCloseable {
         return "Pepper[valor=*]";
     }
 
-    public synchronized void usar(final Consumer<SecureString> operacao) {
+    public <T> T usar(final Function<SecureString, T> operacao) {
         final var copia = codificar();
 
         try {
-            operacao.accept(copia);
+            return operacao.apply(copia);
         } finally {
             copia.clear();
         }
     }
 
-    private SecureString codificar() {
+    private synchronized SecureString codificar() {
         final var bytes = this.valor;
 
         if (bytes == null) {

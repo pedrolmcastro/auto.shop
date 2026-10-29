@@ -120,7 +120,7 @@ public final class PepperTest {
             final var pepper = mock();
             pepper.close();
 
-            assertThatThrownBy(() -> pepper.usar(_ -> {}))
+            assertThatThrownBy(() -> pepper.usar(_ -> null))
                 .isExactlyInstanceOf(IllegalStateException.class)
                 .hasMessage("Pepper usado após fim do seu ciclo de vida");
         }
@@ -128,7 +128,10 @@ public final class PepperTest {
         @Test
         void naoDevePermitirAlteracaoNoValor() {
             try (final var pepper = mock()) {
-                pepper.usar(segredo -> segredo.clear());
+                pepper.usar(segredo -> {
+                    segredo.clear();
+                    return null;
+                });
                 pepper.usar(segredo -> assertThat(segredo.chars()).anyMatch(representacao -> representacao != 0));
             }
         }
