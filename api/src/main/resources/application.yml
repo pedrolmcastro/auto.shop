@@ -1,4 +1,7 @@
 ---
+identidade:
+  pepper:
+    arquivo: ${PEPPER_FILE:secrets/pepper.bin}
 spring:
   application:
     name: api

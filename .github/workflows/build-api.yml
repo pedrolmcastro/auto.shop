@@ -76,7 +76,9 @@ jobs:
           PORT: '8080'
         name: Smoke test
         run: |
+          ./scripts/create-pepper.sh
           docker compose up --detach --no-build app
+          docker compose exec -T app test -r /run/secrets/pepper.bin
           status=$(curl \
             --max-time 2 \
             --output /dev/null \
