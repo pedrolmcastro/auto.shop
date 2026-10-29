@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import shop.auto.api.Fixtures;
 import shop.auto.api.modulos.identidade.dominio.recursos.Pepper.ComprimentoInvalidoException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -19,7 +20,7 @@ public final class PepperTest {
     final class Close {
         @Test
         void deveLimparValor() throws ReflectiveOperationException {
-            final var pepper = mock();
+            final var pepper = Fixtures.pepper();
 
             final var campo = Pepper.class.getDeclaredField("valor");
             campo.setAccessible(true);
@@ -33,7 +34,7 @@ public final class PepperTest {
 
         @Test
         void deveSerIdempotente() {
-            final var pepper = mock();
+            final var pepper = Fixtures.pepper();
 
             assertThatCode(() -> {
                 pepper.close();
@@ -46,12 +47,23 @@ public final class PepperTest {
     final class Construtor {
         @ParameterizedTest
         @ValueSource(bytes = { -128, -1, 0, 1, 127 })
-        void deveAceitarPepperValido(final byte representacao) {
+        void deveAceitarPepperValido(final byte byte_) {
             final var valor = new byte[COMPRIMENTO];
-            Arrays.fill(valor, representacao);
+            Arrays.fill(valor, byte_);
 
             try (final var pepper = new Pepper(valor)) {
                 pepper.usar(segredo -> assertThat(HexFormat.of().parseHex(segredo)).containsExactly(valor));
+            }
+        }
+
+        @Test
+        void deveClonarValor() {
+            final var valor = new byte[COMPRIMENTO];
+            Arrays.fill(valor, (byte) 1);
+
+            try (final var pepper = new Pepper(valor)) {
+                Arrays.fill(valor, (byte) 0);
+                pepper.usar(segredo -> assertThat(segredo.chars()).anyMatch(byte_ -> byte_ != 0));
             }
         }
 
@@ -64,24 +76,13 @@ public final class PepperTest {
                 .isExactlyInstanceOf(ComprimentoInvalidoException.class)
                 .hasMessage("Pepper deve ter exatamente 32 bytes mas tem %d", comprimento);
         }
-
-        @Test
-        void naoClonarValor() {
-            final var valor = new byte[COMPRIMENTO];
-            Arrays.fill(valor, (byte) 1);
-
-            try (final var pepper = new Pepper(valor)) {
-                Arrays.fill(valor, (byte) 0);
-                pepper.usar(segredo -> assertThat(segredo.chars()).anyMatch(representacao -> representacao != 0));
-            }
-        }
     }
 
     @Nested
     final class ToString {
         @Test
         void deveOcultarValor() {
-            try (final var pepper = mock()) {
+            try (final var pepper = Fixtures.pepper()) {
                 assertThat(pepper).hasToString("Pepper[valor=*]");
             }
         }
@@ -95,7 +96,7 @@ public final class PepperTest {
 
             final var referencia = new ArrayList<SecureString>();
 
-            try (final var pepper = mock()) {
+            try (final var pepper = Fixtures.pepper()) {
                 assertThatThrownBy(() -> pepper.usar(segredo -> {
                     referencia.add(segredo);
                     throw excecao;
@@ -109,7 +110,7 @@ public final class PepperTest {
         void deveLimparParametroQuandoTermina() {
             final var referencia = new ArrayList<SecureString>();
 
-            try (final var pepper = mock()) {
+            try (final var pepper = Fixtures.pepper()) {
                 pepper.usar(referencia::add);
                 assertThat(referencia.getFirst().chars()).containsOnly(0);
             }
@@ -117,7 +118,7 @@ public final class PepperTest {
 
         @Test
         void deveRejeitarPepperForaDoCicloDeVida() {
-            final var pepper = mock();
+            final var pepper = Fixtures.pepper();
             pepper.close();
 
             assertThatThrownBy(() -> pepper.usar(_ -> null))
@@ -127,19 +128,13 @@ public final class PepperTest {
 
         @Test
         void naoDevePermitirAlteracaoNoValor() {
-            try (final var pepper = mock()) {
+            try (final var pepper = Fixtures.pepper()) {
                 pepper.usar(segredo -> {
                     segredo.clear();
                     return null;
                 });
-                pepper.usar(segredo -> assertThat(segredo.chars()).anyMatch(representacao -> representacao != 0));
+                pepper.usar(segredo -> assertThat(segredo.chars()).anyMatch(byte_ -> byte_ != 0));
             }
         }
-    }
-
-    private static Pepper mock() {
-        final var valor = new byte[COMPRIMENTO];
-        Arrays.fill(valor, (byte) -1);
-        return new Pepper(valor);
     }
 }
