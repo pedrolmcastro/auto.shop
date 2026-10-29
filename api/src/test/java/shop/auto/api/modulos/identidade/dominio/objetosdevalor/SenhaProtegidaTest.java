@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import shop.auto.api.Fixtures;
 import shop.auto.api.modulos.identidade.dominio.objetosdevalor.SenhaProtegida.InvalidaException.ComprimentoInsuficienteException;
 import shop.auto.api.modulos.identidade.dominio.objetosdevalor.SenhaProtegida.InvalidaException.FormatoInvalidoException;
 import shop.auto.api.modulos.identidade.dominio.objetosdevalor.SenhaProtegida.InvalidaException.IteracoesInsuficientesException;
@@ -46,7 +47,7 @@ public final class SenhaProtegidaTest {
             Base64.getEncoder().withoutPadding().encodeToString(new byte[COMPRIMENTO])
         );
 
-    private static final Pepper PEPPER = new Pepper(new byte[Pepper.COMPRIMENTO]);
+    private static final Pepper PEPPER = Fixtures.pepper();
 
     @Nested
     final class Equals {
@@ -326,10 +327,7 @@ public final class SenhaProtegidaTest {
         void deveRejeitarPepperDiferente() {
             final var senha = new SecureString("senha".toCharArray());
 
-            final var pepper = new byte[Pepper.COMPRIMENTO];
-            pepper[0] = 1;
-
-            assertThat(SenhaProtegida.proteger(senha, PEPPER).verificar(senha, new Pepper(pepper))).isFalse();
+            assertThat(SenhaProtegida.proteger(senha, PEPPER).verificar(senha, Fixtures.pepper((byte) 2))).isFalse();
         }
 
         @ParameterizedTest
