@@ -1,13 +1,21 @@
 ---
 name: api-auto-shop
+secrets:
+  pepper:
+    file: ./secrets/pepper.bin
 services:
   app:
     build:
       context: .
       target: runtime
+    environment:
+      PEPPER_FILE: /run/secrets/pepper.bin
     init: true
     ports:
       - ${PORT:-8080}:8080
+    secrets:
+      - source: pepper
+        target: pepper.bin
   checks:
     build:
       context: .
