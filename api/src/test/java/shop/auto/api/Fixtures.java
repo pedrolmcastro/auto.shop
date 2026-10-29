@@ -1,7 +1,7 @@
 package shop.auto.api;
 
 import java.util.Arrays;
-import shop.auto.api.modulos.identidade.dominio.recursos.Pepper;
+import shop.auto.api.modules.identity.domain.resources.Pepper;
 
 public final class Fixtures {
     private Fixtures() {}

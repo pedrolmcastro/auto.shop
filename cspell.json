@@ -50,7 +50,6 @@
     "noout",
     "NOSONAR",
     "nullaway",
-    "objetosdevalor",
     "Parameterless",
     "pedrolmcastro",
     "pipx",
@@ -64,6 +63,7 @@
     "taplo",
     "temurin",
     "tngtech",
+    "valueobjects",
     "webmvc",
     "xstream",
     "zizmor"
