@@ -17,7 +17,7 @@ public final class EntidadeTest {
         }
 
         @Test
-        void deveSerFalsoQuandoOutroNaoForEntidade() {
+        void deveSerFalsoQuandoNaoForEntidade() {
             assertThat(new Entidade(UUIDv7.criar()) {}).isNotEqualTo(new Object());
         }
 

@@ -1,0 +1,22 @@
+{
+  "rule_sets": [
+    {
+      "matching_content_path": "api/src/main/java/shop/auto/api/modulos/identidade/dominio/objetosdevalor/SenhaProtegida.java",
+      "rules": [
+        {
+          "name": "Primitive Obsession",
+          "weight": 0
+        }
+      ]
+    },
+    {
+      "matching_content_path": "api/src/test/java/shop/auto/api/modulos/identidade/dominio/objetosdevalor/SenhaProtegidaTest.java",
+      "rules": [
+        {
+          "name": "Primitive Obsession",
+          "weight": 0
+        }
+      ]
+    }
+  ]
+}
