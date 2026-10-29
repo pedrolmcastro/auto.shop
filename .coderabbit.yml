@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+---
+chat:
+  art: false
+inheritance: true
+reviews:
+  auto_approvals:
+    enabled: true
+  auto_assign_reviewers: false
+  changed_files_summary: false
+  collapse_walkthrough: true
+  estimate_code_review_effort: false
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+  high_level_summary: false
+  in_progress_fortune: false
+  path_instructions:
+    - instructions: |
+        - Rely on NullAway to perform nullability checks
+        - Assume anything that is not explicitly marked @Nullable is implicitly @NonNull
+        - Don't suggest adding explicit null checks such as Objects.requireNonNull for what NullAway can handle
+      path: api/**/*.java
+  pre_merge_checks:
+    description:
+      mode: 'off'
+    docstrings:
+      mode: 'off'
+    issue_assessment:
+      mode: 'off'
+    title:
+      mode: 'off'
+  profile: assertive
+  related_issues: false
+  related_prs: false
+  review_info: false
+  sequence_diagrams: false
+  suggested_labels: false
