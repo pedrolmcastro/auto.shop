@@ -8,8 +8,6 @@ defaults:
     working-directory: api
 jobs:
   build-api:
-    env:
-      CONTAINER: checks-${{ github.run_id }}-${{ github.run_attempt }}
     name: build-api
     runs-on: ubuntu-24.04
     steps:
@@ -17,6 +15,11 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Set up Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 25.0.5+8
       - env:
           MISE_NO_HOOKS: '1'
         name: Set up Docker
@@ -24,8 +27,13 @@ jobs:
         with:
           cache: true
           install_args: docker-cli docker-compose github:docker/buildx
+      - name: Generate PostgreSQL password
+        run: |
+          password=$(openssl rand -hex 32)
+          echo "::add-mask::$password"
+          echo "POSTGRES_PASSWORD=$password" >> "$GITHUB_ENV"
       - name: Validate Docker
-        run: docker compose --profile quality config --quiet
+        run: docker compose config --quiet
       - env:
           PR_BASE: ${{ github.base_ref }}
           PR_BRANCH: ${{ github.head_ref }}
@@ -44,31 +52,16 @@ jobs:
               )
             fi
           fi
-          docker compose run \
-            --build \
-            --env SONAR_TOKEN \
-            --name "$CONTAINER" \
-            --no-deps \
-            --volume "$GITHUB_WORKSPACE/.git:/workspace/.git:ro" \
-            checks "${args[@]}" --info
-      - id: reports
-        if: ${{ !cancelled() }}
-        name: Export reports
-        run: |
-          DIR="$RUNNER_TEMP/reports"
-          echo "path=$DIR" >> "$GITHUB_OUTPUT"
-          if docker container inspect "$CONTAINER" > /dev/null 2>&1; then
-            mkdir -p "$DIR"
-            docker cp "$CONTAINER:/workspace/api/build/reports" "$DIR/" || true
-            docker cp "$CONTAINER:/workspace/api/build/test-results" "$DIR/" || true
-          fi
+          ./gradlew --no-daemon "${args[@]}" --info
       - if: ${{ !cancelled() }}
         name: Upload reports
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           if-no-files-found: warn
           name: reports
-          path: ${{ steps.reports.outputs.path }}
+          path: |
+            api/build/reports
+            api/build/test-results
           retention-days: 7
       - name: Build
         run: docker compose build app
@@ -76,9 +69,7 @@ jobs:
           PORT: '8080'
         name: Smoke test
         run: |
-          ./scripts/create-pepper.sh
           docker compose up --detach --no-build app
-          docker compose exec -T app test -r /run/secrets/pepper.bin
           status=$(curl \
             --max-time 2 \
             --output /dev/null \
@@ -91,12 +82,13 @@ jobs:
             --write-out '%{http_code}' \
             "http://127.0.0.1:${PORT}/")
           test "$status" -ge 200 && test "$status" -lt 500
+          docker compose exec --user app -T app test -r /app/secrets/pepper.bin
         timeout-minutes: 2
       - if: ${{ always() }}
         name: Clean up
         run: |
           docker compose logs app
-          docker compose --profile quality down --volumes --remove-orphans
+          docker compose down --remove-orphans --volumes
     timeout-minutes: 30
 name: Build API
 'on':

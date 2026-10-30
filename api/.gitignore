@@ -8,4 +8,5 @@ build/
 !**/src/test/**/build/
 
 # Outros
+.env
 secrets/
