@@ -8,7 +8,7 @@ import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import shop.auto.api.modules.identity.application.ports.PepperProvider;
+import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
 import shop.auto.api.modules.identity.domain.resources.Pepper;
 import static org.assertj.core.api.Assertions.assertThat;
 

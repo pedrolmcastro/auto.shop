@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import shop.auto.api.modules.identity.application.ports.PepperProvider;
+import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
 import shop.auto.api.modules.identity.infrastructure.adapters.filesystem.FilesystemPepperProvider;
 
 @Configuration(proxyBeanMethods = false)
