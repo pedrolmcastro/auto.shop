@@ -6,6 +6,8 @@
 !gradle/**
 !gradle.properties
 !gradlew
+!scripts/
+!scripts/**
 !settings.gradle
 !src/
 !src/**
