@@ -44,6 +44,8 @@ configurations.configureEach {
 }
 
 dependencies {
+    compileOnly 'com.google.errorprone:error_prone_annotations:2.48.0'
+    compileOnly 'com.google.guava:guava:33.7.2-jre'
     compileOnly 'org.jspecify:jspecify:1.0.0'
     errorprone 'com.google.errorprone:error_prone_core:2.48.0'
     errorprone 'com.uber.nullaway:nullaway:0.14.1'
@@ -59,6 +61,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
     testImplementation 'com.tngtech.archunit:archunit-junit6:1.5.1'
+    testImplementation 'com.google.guava:guava:33.7.2-jre'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'net.minidev', module: 'json-smart'
     }

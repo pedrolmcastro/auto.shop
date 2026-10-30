@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jooq.impl.DSL.currentCatalog;
 
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
-@Import(value = Config.class)
+@Import(value = IntegrationConfig.class)
 class ApplicationIT {
     @Test
     void deveInicializarComPostgreSQL(@Autowired final DSLContext dsl, @Autowired final Flyway flyway) {
