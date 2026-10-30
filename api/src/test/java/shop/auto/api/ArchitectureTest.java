@@ -3,150 +3,150 @@ package shop.auto.api;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.junit.ArchTests;
 import com.tngtech.archunit.lang.ArchRule;
+import org.flywaydb.core.api.migration.JavaMigration;
+import org.springframework.context.annotation.Configuration;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideOutsideOfPackage;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
+import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 @AnalyzeClasses(packages = "shop.auto.api", importOptions = ImportOption.DoNotIncludeTests.class)
 public final class ArchitectureTest {
     @ArchTest
-    public static final ArchTests CAMADAS = ArchTests.in(Camadas.class);
+    static final ArchRule ADAPTERS_DEVEM_SER_INDEPENDENTES = slices()
+        .matching("..infrastructure.adapters.(*)..")
+        .should()
+        .notDependOnEachOther()
+        .because("Adapters da camada de infrastructure devem ser independentes");
 
     @ArchTest
-    public static final ArchTests MODULOS = ArchTests.in(Modulos.class);
+    static final ArchRule CAMADAS_DEVEM_RESPEITAR_CLEAN_ARCHITECTURE = layeredArchitecture()
+        .consideringOnlyDependenciesInAnyPackage("shop.auto.api..")
+        .layer("Application")
+        .definedBy("..application..")
+        .layer("Domain")
+        .definedBy("..domain..")
+        .layer("Infrastructure")
+        .definedBy("..infrastructure..")
+        .layer("Utils")
+        .definedBy("..utils..")
+        .whereLayer("Application")
+        .mayOnlyAccessLayers("Domain", "Utils")
+        .whereLayer("Domain")
+        .mayOnlyAccessLayers("Utils")
+        .whereLayer("Infrastructure")
+        .mayOnlyAccessLayers("Application", "Domain", "Utils")
+        .whereLayer("Utils")
+        .mayNotAccessAnyLayer();
 
-    public static final class Camadas {
-        @ArchTest
-        public static final ArchTests APLICACAO = ArchTests.in(Aplicacao.class);
+    @ArchTest
+    static final ArchRule CODIGO_GENERATED_DEVE_SER_INDEPENDENTE = noClasses()
+        .that()
+        .resideInAPackage("..infrastructure.generated..")
+        .should()
+        .dependOnClassesThat(
+            resideInAPackage("shop.auto.api..").and(resideOutsideOfPackage("..infrastructure.generated.."))
+        )
+        .because("Código gerado automaticamente deve ser independente do restante da aplicação");
 
-        @ArchTest
-        public static final ArchTests DOMINIO = ArchTests.in(Dominio.class);
+    @ArchTest
+    static final ArchRule CONFIGS_DEVEM_TER_ANOTACAO = classes()
+        .that()
+        .resideInAPackage("..infrastructure.config..")
+        .should()
+        .beAnnotatedWith(Configuration.class)
+        .because("Configs da camada de infrastructure devem ser anotadas com @Configuration");
 
-        @ArchTest
-        public static final ArchTests UTILS = ArchTests.in(Utils.class);
+    @ArchTest
+    static final ArchRule JOOQ_DEVE_SER_USADO_SOMENTE_NA_CAMADA_DE_INFRASTRUCTURE = noClasses()
+        .that()
+        .resideOutsideOfPackage("..infrastructure..")
+        .should()
+        .dependOnClassesThat()
+        .resideInAPackage("org.jooq..")
+        .because("jOOQ deve ser usado apenas na camada de infrastructure");
 
-        public static final class Aplicacao {
-            private static final String PACKAGE = "..application..";
+    @ArchTest
+    static final ArchRule MIGRATIONS_DEVEM_IMPLEMENTAR_JAVA_MIGRATION = classes()
+        .that()
+        .resideInAPackage("..infrastructure.migration..")
+        .should()
+        .beAssignableTo(JavaMigration.class)
+        .because("Migrations definidas em Java na camada de infrastructure devem implementar o contrato do Flyway");
 
-            @ArchTest
-            static final ArchRule NAO_DEVE_DEPENDER_DA_INFRAESTRUTURA = naoDeveDependerDe(
-                PACKAGE,
-                Infraestrutura.PACKAGE,
-                "A camada de aplicação deve ser independente da camada de infraestrutura"
-            );
-        }
+    @ArchTest
+    static final ArchRule MODULOS_DEVEM_SER_ACICLICOS = slices()
+        .matching("..modules.(*)..")
+        .should()
+        .beFreeOfCycles()
+        .because("Módulos devem manter uma direção de dependências sem ciclos");
 
-        public static final class Dominio {
-            @ArchTest
-            public static final ArchTests OBJETOS_DE_VALOR = ArchTests.in(ObjetosDeValor.class);
+    @ArchTest
+    static final ArchRule PORTS_DEVEM_SER_INTERFACES = classes()
+        .that()
+        .resideInAPackage("..application.ports..")
+        .should()
+        .beInterfaces()
+        .because("Ports da camada de application devem ser apenas contratos");
 
-            @ArchTest
-            public static final ArchTests RECURSOS = ArchTests.in(Recursos.class);
+    @ArchTest
+    static final ArchRule SHARED_DEVE_SER_INDEPENDENTE = noClasses()
+        .that()
+        .resideInAPackage("..shared..")
+        .should()
+        .dependOnClassesThat()
+        .resideInAPackage("..modules..")
+        .because("O módulo shared deve ser independente de outros módulos");
 
-            private static final String PREFIXO = "..domain";
-            private static final String PACKAGE = PREFIXO + "..";
+    @ArchTest
+    static final ArchRule SPRING_DEVE_SER_USADO_SOMENTE_NA_CAMADA_DE_INFRASTRUCTURE = noClasses()
+        .that()
+        .resideOutsideOfPackage("..infrastructure..")
+        .and()
+        .doNotHaveFullyQualifiedName(Application.class.getName())
+        .should()
+        .dependOnClassesThat()
+        .resideInAPackage("org.springframework..")
+        .because("Spring deve ser usado apenas na camada de infrastructure e na Application");
 
-            @ArchTest
-            static final ArchRule NAO_DEVE_DEPENDER_DA_APLICACAO = naoDeveDependerDe(
-                PACKAGE,
-                Aplicacao.PACKAGE,
-                "A camada de domínio deve ser independentes da camada de aplicação"
-            );
+    @ArchTest
+    static final ArchRule SUBCAMADAS_DE_DOMAIN_DEVEM_RESPEITAR_CLEAN_ARCHITECTURE = layeredArchitecture()
+        .consideringOnlyDependenciesInLayers()
+        .layer("Entities")
+        .definedBy("..domain.entities..")
+        .layer("Value objects")
+        .definedBy("..domain.valueobjects..")
+        .layer("Resources")
+        .definedBy("..domain.resources..")
+        .whereLayer("Entities")
+        .mayOnlyAccessLayers("Resources", "Value objects")
+        .whereLayer("Value objects")
+        .mayOnlyAccessLayers("Resources")
+        .whereLayer("Resources")
+        .mayNotAccessAnyLayer();
 
-            @ArchTest
-            static final ArchRule NAO_DEVE_DEPENDER_DA_INFRAESTRUTURA = naoDeveDependerDe(
-                PACKAGE,
-                Infraestrutura.PACKAGE,
-                "A camada de domínio deve ser independentes da camada de infraestrutura"
-            );
-
-            public static final class Entidades {
-                private static final String PACKAGE = Dominio.PREFIXO + ".entities..";
-            }
-
-            public static final class ObjetosDeValor {
-                private static final String PACKAGE = Dominio.PREFIXO + ".valueobjects..";
-
-                @ArchTest
-                static final ArchRule NAO_DEVEM_DEPENDER_DE_ENTIDADES = naoDeveDependerDe(
-                    PACKAGE,
-                    Entidades.PACKAGE,
-                    "Objetos de valor devem ser independentes de entidades"
-                );
-            }
-
-            public static final class Recursos {
-                private static final String PACKAGE = Dominio.PREFIXO + ".resources..";
-
-                @ArchTest
-                static final ArchRule NAO_DEVEM_DEPENDER_DE_ENTIDADES = naoDeveDependerDe(
-                    PACKAGE,
-                    Entidades.PACKAGE,
-                    "Recursos devem ser independentes de entidades"
-                );
-
-                @ArchTest
-                static final ArchRule NAO_DEVEM_DEPENDER_DE_OBJETOS_DE_VALOR = naoDeveDependerDe(
-                    PACKAGE,
-                    ObjetosDeValor.PACKAGE,
-                    "Recursos devem ser independentes de objetos de valor"
-                );
-            }
-        }
-
-        public static final class Infraestrutura {
-            private static final String PACKAGE = "..infrastructure..";
-        }
-
-        public static final class Utils {
-            private static final String PACKAGE = "..utils..";
-
-            @ArchTest
-            static final ArchRule NAO_DEVEM_DEPENDER_DA_APLICACAO = naoDeveDependerDe(
-                PACKAGE,
-                Aplicacao.PACKAGE,
-                "Utilitários devem ser independentes da camada de aplicação"
-            );
-
-            @ArchTest
-            static final ArchRule NAO_DEVEM_DEPENDER_DO_DOMINIO = naoDeveDependerDe(
-                PACKAGE,
-                Dominio.PACKAGE,
-                "Utilitários devem ser independentes da camada de domínio"
-            );
-
-            @ArchTest
-            static final ArchRule NAO_DEVEM_DEPENDER_DA_INFRAESTRUTURA = naoDeveDependerDe(
-                PACKAGE,
-                Infraestrutura.PACKAGE,
-                "Utilitários devem ser independentes da camada de infraestrutura"
-            );
-        }
-    }
-
-    public static final class Modulos {
-        @ArchTest
-        public static final ArchTests COMPARTILHADO = ArchTests.in(Compartilhado.class);
-
-        public static final class Compartilhado {
-            @ArchTest
-            static final ArchRule NAO_DEVE_DEPENDER_DE_MODULOS = naoDeveDependerDe(
-                "..shared..",
-                "..modules..",
-                "O módulo compartilhado deve ser independentes de outros módulos"
-            );
-        }
-    }
+    @ArchTest
+    static final ArchRule SUBCAMADAS_DE_INFRASTRUCTURE_DEVEM_RESPEITAR_CLEAN_ARCHITECTURE = layeredArchitecture()
+        .consideringOnlyDependenciesInLayers()
+        .layer("Adapters")
+        .definedBy("..infrastructure.adapters..")
+        .layer("Config")
+        .definedBy("..infrastructure.config..")
+        .layer("Generated")
+        .definedBy("..infrastructure.generated..")
+        .layer("Migration")
+        .definedBy("..infrastructure.migration..")
+        .whereLayer("Adapters")
+        .mayOnlyAccessLayers("Generated")
+        .whereLayer("Config")
+        .mayOnlyAccessLayers("Adapters")
+        .whereLayer("Migration")
+        .mayOnlyAccessLayers("Generated")
+        .whereLayer("Generated")
+        .mayNotAccessAnyLayer();
 
     private ArchitectureTest() {}
-
-    private static ArchRule naoDeveDependerDe(final String origem, final String destino, final String motivo) {
-        return noClasses()
-            .that()
-            .resideInAPackage(origem)
-            .should()
-            .dependOnClassesThat()
-            .resideInAPackage(destino)
-            .because(motivo);
-    }
 }

@@ -5,7 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import shop.auto.api.modules.identity.application.ports.PepperProvider;
+import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
 import shop.auto.api.modules.identity.domain.resources.Pepper;
 
 public final class FilesystemPepperProvider implements PepperProvider {

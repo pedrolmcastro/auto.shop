@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="~shop\.auto\.api\.modules\.identity\.infrastructure\.generated\.jooq\..*"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="~shop\.auto\.api\.modules\..*\.infrastructure\.adapters\.persistence\..*Repository"/>
+        <Field type="org.jooq.DSLContext"/>
+        <Method name="&lt;init&gt;"/>
+    </Match>
+</FindBugsFilter>
