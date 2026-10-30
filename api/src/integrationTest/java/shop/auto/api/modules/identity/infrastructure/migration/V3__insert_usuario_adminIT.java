@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import shop.auto.api.Config;
+import shop.auto.api.IntegrationConfig;
 import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
 import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida;
 import static org.assertj.core.api.Assertions.assertThat;
 import static shop.auto.api.modules.identity.infrastructure.generated.jooq.tables.Usuario.USUARIO;
 
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
-@Import(value = Config.class)
+@Import(value = IntegrationConfig.class)
 class V3__insert_usuario_adminIT {
     @Test
     void deveInserirAdmin(@Autowired final DSLContext dsl, @Autowired final PepperProvider pepperProvider) {

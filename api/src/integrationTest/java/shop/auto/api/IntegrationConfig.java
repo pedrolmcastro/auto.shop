@@ -6,10 +6,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
+import shop.auto.api.modules.identity.application.ports.repositories.UsuarioRepository;
 import shop.auto.api.modules.identity.domain.resources.Pepper;
 
 @TestConfiguration(proxyBeanMethods = false)
-public class Config {
+public class IntegrationConfig {
+    @Bean
+    public IntegrationFixtures testFixtures(final UsuarioRepository usuarios) {
+        return new IntegrationFixtures(usuarios);
+    }
+
     @Bean
     @Primary
     public PepperProvider testPepperProvider() {

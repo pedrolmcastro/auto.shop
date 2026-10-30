@@ -54,7 +54,6 @@
         <module name="JavadocParamOrder"/>
         <module name="JavadocSeeTagOrder"/>
         <module name="JavadocThrowsOrder"/>
-        <module name="MissingNullCaseInSwitch"/>
         <module name="ModifiedControlVariable"/>
         <module name="ModuleDirectiveOrder"/>
         <module name="ModuleImportOrder"/>

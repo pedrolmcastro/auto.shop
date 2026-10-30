@@ -1,11 +1,15 @@
 package shop.auto.api;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.tngtech.archunit.core.domain.JavaAccess;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.flywaydb.core.api.migration.JavaMigration;
 import org.springframework.context.annotation.Configuration;
+import shop.auto.api.shared.utils.VisibleForRepository;
+import static com.tngtech.archunit.base.DescribedPredicate.describe;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideOutsideOfPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -88,6 +92,8 @@ public final class ArchitectureTest {
     static final ArchRule PORTS_DEVEM_SER_INTERFACES = classes()
         .that()
         .resideInAPackage("..application.ports..")
+        .and()
+        .areTopLevelClasses()
         .should()
         .beInterfaces()
         .because("Ports da camada de application devem ser apenas contratos");
@@ -147,6 +153,33 @@ public final class ArchitectureTest {
         .mayOnlyAccessLayers("Generated")
         .whereLayer("Generated")
         .mayNotAccessAnyLayer();
+
+    @ArchTest
+    static final ArchRule VISIBLE_FOR_REPOSITORY_DEVE_SER_USADO_APENAS_POR_REPOSITORIOS = noClasses()
+        .should()
+        .accessTargetWhere(
+            describe(
+                "acessar membro @VisibleForRepository fora dos adapters de persistence",
+                (JavaAccess<?> chamada) -> {
+                    return chamada.getTarget().isAnnotatedWith(VisibleForRepository.class)
+                        && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
+                        && !resideInAPackage("..infrastructure.adapters.persistence..").test(chamada.getOriginOwner());
+                }
+            )
+        )
+        .because("Métodos @VisibleForRepository devem ser reservados à repository persistence adapters");
+
+    @ArchTest
+    static final ArchRule VISIBLE_FOR_TESTING_DEVE_SER_USADO_APENAS_PELA_CLASSE = noClasses()
+        .should()
+        .accessTargetWhere(
+            describe(
+                "acessar membro marcado @VisibleForTesting de outra classe",
+                (JavaAccess<?> chamada) -> chamada.getTarget().isAnnotatedWith(VisibleForTesting.class)
+                    && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
+            )
+        )
+        .because("Métodos @VisibleForTesting devem ser reservados à testes");
 
     private ArchitectureTest() {}
 }

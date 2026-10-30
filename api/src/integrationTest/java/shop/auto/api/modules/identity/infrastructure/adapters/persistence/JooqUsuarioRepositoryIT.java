@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
-import shop.auto.api.Config;
+import shop.auto.api.IntegrationConfig;
 import shop.auto.api.modules.identity.application.ports.providers.PepperProvider;
 import shop.auto.api.modules.identity.application.ports.repositories.UsuarioRepository;
 import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static shop.auto.api.modules.identity.infrastructure.generated.jooq.tables.Usuario.USUARIO;
 
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
-@Import(value = Config.class)
+@Import(value = IntegrationConfig.class)
 @Transactional
 class JooqUsuarioRepositoryIT {
     @Nested
@@ -37,8 +37,10 @@ class JooqUsuarioRepositoryIT {
                 final var senhaProtegida = SenhaProtegida.proteger(senha, pepper);
 
                 dsl
-                    .insertInto(USUARIO, USUARIO.ID, USUARIO.NOME, USUARIO.SENHA)
-                    .values(id.valor(), nome.valor(), senhaProtegida.valor())
+                    .insertInto(USUARIO)
+                    .set(USUARIO.ID, id.valor())
+                    .set(USUARIO.NOME, nome.valor())
+                    .set(USUARIO.SENHA, senhaProtegida.valor())
                     .execute();
 
                 final var usuario = repositorio.buscar(nome).orElseThrow();
