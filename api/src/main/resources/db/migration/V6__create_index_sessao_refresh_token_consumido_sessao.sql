@@ -1,0 +1,1 @@
+CREATE INDEX sessao_refresh_token_consumido_sessao_idx ON identity.sessao_refresh_token_consumido (sessao);

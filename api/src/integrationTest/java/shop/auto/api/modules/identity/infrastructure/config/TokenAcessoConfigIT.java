@@ -17,6 +17,7 @@ import shop.auto.api.modules.identity.domain.entities.Sessao;
 import shop.auto.api.shared.domain.valueobjects.UUIDv7;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static shop.auto.api.IntegrationFixtures.refreshTokenHash;
 
 public final class TokenAcessoConfigIT {
     @Test
@@ -37,7 +38,9 @@ public final class TokenAcessoConfigIT {
                     .parse(
                         assertInstanceOf(
                             ResultadoEmissao.Sucesso.class,
-                            contexto.getBean(TokenAcessoProvider.class).emitir(Sessao.criar(UUIDv7.criar()))
+                            contexto
+                                .getBean(TokenAcessoProvider.class)
+                                .emitir(Sessao.criar(UUIDv7.criar(), refreshTokenHash()))
                         ).token().valor()
                     );
 

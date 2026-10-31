@@ -6,7 +6,7 @@
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="48"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_conditional_expression" value="49"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_enum_constants" value="49"/>
-        <setting id="org.eclipse.jdt.core.formatter.alignment_for_logical_operator" value="48"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_logical_operator" value="50"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration" value="48"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration" value="48"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_resources_in_try" value="48"/>
@@ -39,6 +39,7 @@
         <setting id="org.eclipse.jdt.core.formatter.keep_type_declaration_on_one_line" value="one_line_if_empty"/>
         <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
         <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_if_while_statement" value="separate_lines_if_wrapped"/>
         <!-- cspell:ignore delcaration -->
         <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_delcaration" value="separate_lines_if_wrapped"/>
         <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation" value="separate_lines_if_wrapped"/>

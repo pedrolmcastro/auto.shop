@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.InstantSource;
 import org.jspecify.annotations.Nullable;
+import shop.auto.api.modules.identity.domain.valueobjects.RefreshTokenHash;
 import shop.auto.api.shared.domain.entities.Entity;
 import shop.auto.api.shared.domain.valueobjects.UUIDv7;
 import shop.auto.api.shared.utils.VisibleForRepository;
@@ -13,6 +14,7 @@ public final class Sessao extends Entity {
     public static final Duration DURACAO = Duration.ofHours(8);
 
     private final UUIDv7 usuario;
+    private final RefreshTokenHash refreshTokenHash;
     private final Instant criadaEm;
     private final Instant expiraEm;
     private @Nullable Instant revogadaEm;
@@ -22,17 +24,19 @@ public final class Sessao extends Entity {
     public Sessao(
         final UUIDv7 id,
         final UUIDv7 usuario,
+        final RefreshTokenHash refreshTokenHash,
         final Instant criadaEm,
         final Instant expiraEm,
         final @Nullable Instant revogadaEm
     ) {
-        this(id, usuario, criadaEm, expiraEm, revogadaEm, InstantSource.system());
+        this(id, usuario, refreshTokenHash, criadaEm, expiraEm, revogadaEm, InstantSource.system());
     }
 
     @VisibleForTesting
     public Sessao(
         final UUIDv7 id,
         final UUIDv7 usuario,
+        final RefreshTokenHash refreshTokenHash,
         final Instant criadaEm,
         final Instant expiraEm,
         final @Nullable Instant revogadaEm,
@@ -61,20 +65,25 @@ public final class Sessao extends Entity {
         super(id);
 
         this.usuario = usuario;
+        this.refreshTokenHash = refreshTokenHash;
         this.criadaEm = criadaEm;
         this.expiraEm = expiraEm;
         this.revogadaEm = revogadaEm;
         this.relogio = relogio;
     }
 
-    public static Sessao criar(final UUIDv7 usuario) {
-        return criar(usuario, InstantSource.system());
+    public static Sessao criar(final UUIDv7 usuario, final RefreshTokenHash refreshTokenHash) {
+        return criar(usuario, refreshTokenHash, InstantSource.system());
     }
 
     @VisibleForTesting
-    public static Sessao criar(final UUIDv7 usuario, final InstantSource source) {
+    public static Sessao criar(
+        final UUIDv7 usuario,
+        final RefreshTokenHash refreshTokenHash,
+        final InstantSource source
+    ) {
         final var criadaEm = source.instant();
-        return new Sessao(UUIDv7.criar(), usuario, criadaEm, criadaEm.plus(DURACAO), null, source);
+        return new Sessao(UUIDv7.criar(), usuario, refreshTokenHash, criadaEm, criadaEm.plus(DURACAO), null, source);
     }
 
     @VisibleForRepository
@@ -101,6 +110,10 @@ public final class Sessao extends Entity {
     @VisibleForRepository
     public Instant expiraEm() {
         return this.expiraEm;
+    }
+
+    public RefreshTokenHash refreshTokenHash() {
+        return this.refreshTokenHash;
     }
 
     public void revogar() {

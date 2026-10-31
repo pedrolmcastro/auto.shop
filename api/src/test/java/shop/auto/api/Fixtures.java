@@ -2,6 +2,8 @@ package shop.auto.api;
 
 import java.util.Arrays;
 import shop.auto.api.modules.identity.domain.resources.Pepper;
+import shop.auto.api.modules.identity.domain.valueobjects.RefreshToken;
+import shop.auto.api.modules.identity.domain.valueobjects.RefreshTokenHash;
 
 public final class Fixtures {
     private Fixtures() {}
@@ -14,5 +16,9 @@ public final class Fixtures {
         final var valor = new byte[Pepper.COMPRIMENTO];
         Arrays.fill(valor, byte_);
         return new Pepper(valor);
+    }
+
+    public static RefreshTokenHash refreshTokenHash() {
+        return RefreshTokenHash.hash(RefreshToken.criar());
     }
 }
