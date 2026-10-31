@@ -16,7 +16,7 @@ public final class Pepper implements AutoCloseable {
 
     public Pepper(final byte[] valor) {
         if (valor.length != COMPRIMENTO) {
-            throw new ComprimentoInvalidoException(valor.length);
+            throw new InvarianteException.ComprimentoInvalido(valor.length);
         }
 
         this.valor = valor.clone();
@@ -69,9 +69,15 @@ public final class Pepper implements AutoCloseable {
         }
     }
 
-    public static final class ComprimentoInvalidoException extends IllegalArgumentException {
-        private ComprimentoInvalidoException(final int comprimento) {
-            super(String.format("Pepper deve ter exatamente %d bytes mas tem %d", COMPRIMENTO, comprimento));
+    public abstract static sealed class InvarianteException extends IllegalArgumentException {
+        public static final class ComprimentoInvalido extends InvarianteException {
+            private ComprimentoInvalido(final int comprimento) {
+                super(String.format("Pepper deve ter exatamente %d bytes mas tem %d", COMPRIMENTO, comprimento));
+            }
+        }
+
+        private InvarianteException(final String mensagem) {
+            super(mensagem);
         }
     }
 }

@@ -39,13 +39,13 @@ public final class SenhaProtegida {
         try {
             funcao = Argon2Function.getInstanceFromHash(valor);
         } catch (final RuntimeException excecao) {
-            throw new InvalidaException.FormatoInvalidoException(excecao);
+            throw new InvarianteException.FormatoInvalido(excecao);
         }
 
         final var comprimento = funcao.getOutputLength();
 
         if (comprimento < COMPRIMENTO) {
-            throw new InvalidaException.ComprimentoInsuficienteException(comprimento);
+            throw new InvarianteException.ComprimentoInsuficiente(comprimento);
         }
 
         final int comprimentoSalt;
@@ -53,41 +53,41 @@ public final class SenhaProtegida {
         try {
             comprimentoSalt = Base64.getDecoder().decode(getSalt(valor)).length;
         } catch (final IllegalArgumentException excecao) {
-            throw new InvalidaException.SaltInvalidoException.FormatoInvalidoException(excecao);
+            throw new InvarianteException.Salt.FormatoInvalido(excecao);
         }
 
         if (comprimentoSalt < COMPRIMENTO_SALT) {
-            throw new InvalidaException.SaltInvalidoException.ComprimentoInvalidoException(comprimentoSalt);
+            throw new InvarianteException.Salt.ComprimentoInvalido(comprimentoSalt);
         }
 
         final var iteracoes = funcao.getIterations();
 
         if (iteracoes < ITERACOES) {
-            throw new InvalidaException.IteracoesInsuficientesException(iteracoes);
+            throw new InvarianteException.IteracoesInsuficientes(iteracoes);
         }
 
         final var memoria = funcao.getMemory();
 
         if (memoria < MEMORIA) {
-            throw new InvalidaException.MemoriaInsuficienteException(memoria);
+            throw new InvarianteException.MemoriaInsuficiente(memoria);
         }
 
         final var paralelismo = funcao.getParallelism();
 
         if (paralelismo != PARALELISMO) {
-            throw new InvalidaException.ParalelismoInvalidoException(paralelismo);
+            throw new InvarianteException.ParalelismoInvalido(paralelismo);
         }
 
         final var variante = funcao.getVariant();
 
         if (variante != VARIANTE) {
-            throw new InvalidaException.VarianteInvalidaException(variante);
+            throw new InvarianteException.VarianteInvalida(variante);
         }
 
         final var versao = funcao.getVersion();
 
         if (versao != VERSAO) {
-            throw new InvalidaException.VersaoInvalidaException(versao);
+            throw new InvarianteException.VersaoInvalida(versao);
         }
 
         return new SenhaProtegida(valor);
@@ -121,42 +121,42 @@ public final class SenhaProtegida {
         return pepper.usar(p -> Password.check(senha, this.valor).addPepper(p).with(funcao));
     }
 
-    public abstract static sealed class InvalidaException extends IllegalArgumentException {
-        public static final class ComprimentoInsuficienteException extends InvalidaException {
-            private ComprimentoInsuficienteException(final int comprimento) {
+    public abstract static sealed class InvarianteException extends IllegalArgumentException {
+        public static final class ComprimentoInsuficiente extends InvarianteException {
+            private ComprimentoInsuficiente(final int comprimento) {
                 super(String.format("Hash da senha deve ter no mínimo %d bytes mas tem %d", COMPRIMENTO, comprimento));
             }
         }
 
-        public static final class FormatoInvalidoException extends InvalidaException {
-            private FormatoInvalidoException(final RuntimeException causa) {
+        public static final class FormatoInvalido extends InvarianteException {
+            private FormatoInvalido(final RuntimeException causa) {
                 super("Senha deve ser protegida com hash Argon2id", causa);
             }
         }
 
-        public static final class IteracoesInsuficientesException extends InvalidaException {
-            private IteracoesInsuficientesException(final int iteracoes) {
+        public static final class IteracoesInsuficientes extends InvarianteException {
+            private IteracoesInsuficientes(final int iteracoes) {
                 super(String.format("Hash da senha deve usar no mínimo %d iterações mas usa %d", ITERACOES, iteracoes));
             }
         }
 
-        public static final class MemoriaInsuficienteException extends InvalidaException {
-            private MemoriaInsuficienteException(final int memoria) {
+        public static final class MemoriaInsuficiente extends InvarianteException {
+            private MemoriaInsuficiente(final int memoria) {
                 super(
                     String.format("Hash da senha deve usar no mínimo %d KiB de memória mas usa %d", MEMORIA, memoria)
                 );
             }
         }
 
-        public static final class ParalelismoInvalidoException extends InvalidaException {
-            private ParalelismoInvalidoException(final int paralelismo) {
+        public static final class ParalelismoInvalido extends InvarianteException {
+            private ParalelismoInvalido(final int paralelismo) {
                 super(String.format("Hash da senha deve paralelismo %d mas usa %d", PARALELISMO, paralelismo));
             }
         }
 
-        public abstract static sealed class SaltInvalidoException extends InvalidaException {
-            public static final class ComprimentoInvalidoException extends SaltInvalidoException {
-                private ComprimentoInvalidoException(final int comprimento) {
+        public abstract static sealed class Salt extends InvarianteException {
+            public static final class ComprimentoInvalido extends Salt {
+                private ComprimentoInvalido(final int comprimento) {
                     super(
                         String
                             .format(
@@ -168,23 +168,23 @@ public final class SenhaProtegida {
                 }
             }
 
-            public static final class FormatoInvalidoException extends SaltInvalidoException {
-                private FormatoInvalidoException(final IllegalArgumentException causa) {
+            public static final class FormatoInvalido extends Salt {
+                private FormatoInvalido(final IllegalArgumentException causa) {
                     super("Salt da senha deve estar codificado em Base64", causa);
                 }
             }
 
-            private SaltInvalidoException(final String mensagem) {
+            private Salt(final String mensagem) {
                 super(mensagem);
             }
 
-            private SaltInvalidoException(final String mensagem, final Throwable causa) {
+            private Salt(final String mensagem, final Throwable causa) {
                 super(mensagem, causa);
             }
         }
 
-        public static final class VarianteInvalidaException extends InvalidaException {
-            private VarianteInvalidaException(final Argon2 variante) {
+        public static final class VarianteInvalida extends InvarianteException {
+            private VarianteInvalida(final Argon2 variante) {
                 super(
                     String
                         .format(
@@ -195,17 +195,17 @@ public final class SenhaProtegida {
             }
         }
 
-        public static final class VersaoInvalidaException extends InvalidaException {
-            private VersaoInvalidaException(final int versao) {
+        public static final class VersaoInvalida extends InvarianteException {
+            private VersaoInvalida(final int versao) {
                 super(String.format("Hash da senha deve usar a versão %d do Argon2 mas usa %d", VERSAO, versao));
             }
         }
 
-        private InvalidaException(final String mensagem) {
+        private InvarianteException(final String mensagem) {
             super(mensagem);
         }
 
-        private InvalidaException(final String mensagem, final Throwable causa) {
+        private InvarianteException(final String mensagem, final Throwable causa) {
             super(mensagem, causa);
         }
     }

@@ -28,30 +28,30 @@ public record TokenAcesso(Jwt jwt) {
         final var algoritmo = jwt.getHeaders().get("alg");
 
         if (algoritmo == null) {
-            throw new InvalidoException.Algoritmo.Ausente();
+            throw new InvarianteException.Algoritmo.Ausente();
         }
 
         if (ALGORITMO != algoritmo && !ALGORITMO.getName().equals(algoritmo)) {
-            throw new InvalidoException.Algoritmo.Invalido(algoritmo);
+            throw new InvarianteException.Algoritmo.Invalido(algoritmo);
         }
 
         final var errosAudiencia = VALIDADOR_AUDIENCIA.validate(jwt).getErrors();
 
         if (!errosAudiencia.isEmpty()) {
-            throw new InvalidoException.AudienciaAusente(errosAudiencia);
+            throw new InvarianteException.AudienciaAusente(errosAudiencia);
         }
 
         final var errosEmissor = VALIDADOR_EMISSOR.validate(jwt).getErrors();
 
         if (!errosEmissor.isEmpty()) {
-            throw new InvalidoException.EmissorInvalido(errosEmissor);
+            throw new InvarianteException.EmissorInvalido(errosEmissor);
         }
 
         final var emitidoEm = emitidoEm(jwt);
         final var expiraEm = expiraEm(jwt);
 
         if (!expiraEm.isAfter(emitidoEm)) {
-            throw new InvalidoException.Expiracao.Invalida(emitidoEm, expiraEm);
+            throw new InvarianteException.Expiracao.Invalida(emitidoEm, expiraEm);
         }
 
         sujeito(jwt);
@@ -59,7 +59,7 @@ public record TokenAcesso(Jwt jwt) {
         final var errosTipo = VALIDADOR_TIPO.validate(jwt).getErrors();
 
         if (!errosTipo.isEmpty()) {
-            throw new InvalidoException.TipoInvalido(errosTipo);
+            throw new InvarianteException.TipoInvalido(errosTipo);
         }
     }
 
@@ -73,7 +73,7 @@ public record TokenAcesso(Jwt jwt) {
         final var emitidoEm = jwt.getIssuedAt();
 
         if (emitidoEm == null) {
-            throw new InvalidoException.EmissaoAusente();
+            throw new InvarianteException.EmissaoAusente();
         }
 
         return emitidoEm;
@@ -89,7 +89,7 @@ public record TokenAcesso(Jwt jwt) {
         final var expiraEm = jwt.getExpiresAt();
 
         if (expiraEm == null) {
-            throw new InvalidoException.Expiracao.Ausente();
+            throw new InvarianteException.Expiracao.Ausente();
         }
 
         return expiraEm;
@@ -103,13 +103,13 @@ public record TokenAcesso(Jwt jwt) {
         final var sujeito = jwt.getSubject();
 
         if (sujeito == null) {
-            throw new InvalidoException.Sujeito.Ausente();
+            throw new InvarianteException.Sujeito.Ausente();
         }
 
         try {
             return new UUIDv7(UUID.fromString(sujeito));
         } catch (IllegalArgumentException excecao) {
-            throw new InvalidoException.Sujeito.Invalido(sujeito, excecao);
+            throw new InvarianteException.Sujeito.Invalido(sujeito, excecao);
         }
     }
 
@@ -129,8 +129,8 @@ public record TokenAcesso(Jwt jwt) {
         return this.jwt.getTokenValue();
     }
 
-    public abstract static sealed class InvalidoException extends IllegalArgumentException {
-        public abstract static sealed class Algoritmo extends InvalidoException {
+    public abstract static sealed class InvarianteException extends IllegalArgumentException {
+        public abstract static sealed class Algoritmo extends InvarianteException {
             public static final class Ausente extends Algoritmo {
                 private Ausente() {
                     super("Token de acesso deve conter alg");
@@ -148,7 +148,7 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        public static final class AudienciaAusente extends InvalidoException {
+        public static final class AudienciaAusente extends InvarianteException {
             private AudienciaAusente(final Collection<OAuth2Error> erros) {
                 super(
                     String.format("Audiência do token de acesso deve incluir %s", AUDIENCIA),
@@ -157,13 +157,13 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        public static final class EmissaoAusente extends InvalidoException {
+        public static final class EmissaoAusente extends InvarianteException {
             private EmissaoAusente() {
                 super("Token de acesso deve conter momento de emissão");
             }
         }
 
-        public static final class EmissorInvalido extends InvalidoException {
+        public static final class EmissorInvalido extends InvarianteException {
             private EmissorInvalido(final Collection<OAuth2Error> erros) {
                 super(
                     String.format("Emissor do token de acesso deve ser %s", EMISSOR),
@@ -172,7 +172,7 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        public abstract static sealed class Expiracao extends InvalidoException {
+        public abstract static sealed class Expiracao extends InvarianteException {
             public static final class Ausente extends Expiracao {
                 private Ausente() {
                     super("Token de acesso deve conter momento de expiração");
@@ -197,7 +197,7 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        public abstract static sealed class Sujeito extends InvalidoException {
+        public abstract static sealed class Sujeito extends InvarianteException {
             public static final class Ausente extends Sujeito {
                 private Ausente() {
                     super("Token de acesso deve conter sujeito");
@@ -219,7 +219,7 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        public static final class TipoInvalido extends InvalidoException {
+        public static final class TipoInvalido extends InvarianteException {
             private TipoInvalido(final Collection<OAuth2Error> erros) {
                 super(
                     String.format("Tipo do token de acesso deve ser %s", String.join(" ou ", TIPOS)),
@@ -228,11 +228,11 @@ public record TokenAcesso(Jwt jwt) {
             }
         }
 
-        private InvalidoException(final String mensagem) {
+        private InvarianteException(final String mensagem) {
             super(mensagem);
         }
 
-        private InvalidoException(final String mensagem, final Throwable causa) {
+        private InvarianteException(final String mensagem, final Throwable causa) {
             super(mensagem, causa);
         }
     }

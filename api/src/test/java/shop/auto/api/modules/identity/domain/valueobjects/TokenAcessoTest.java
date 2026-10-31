@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
-import shop.auto.api.modules.identity.domain.valueobjects.TokenAcesso.InvalidoException;
 import shop.auto.api.shared.domain.valueobjects.UUIDv7;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,7 +66,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().headers(headers -> headers.remove("alg")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Algoritmo.Ausente.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Algoritmo.Ausente.class)
                 .hasMessage("Token de acesso deve conter alg");
         }
 
@@ -77,7 +76,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().header("alg", algoritmo).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Algoritmo.Invalido.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Algoritmo.Invalido.class)
                 .hasMessage("alg do token de acesso deve ser %s mas é %s", TokenAcesso.ALGORITMO.getName(), algoritmo);
         }
 
@@ -86,7 +85,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claims(claims -> claims.remove("aud")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.AudienciaAusente.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.AudienciaAusente.class)
                 .hasMessage("Audiência do token de acesso deve incluir %s", TokenAcesso.AUDIENCIA)
                 .hasCauseInstanceOf(JwtValidationException.class);
         }
@@ -96,7 +95,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claims(claims -> claims.remove("iat")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.EmissaoAusente.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.EmissaoAusente.class)
                 .hasMessage("Token de acesso deve conter momento de emissão");
         }
 
@@ -105,7 +104,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claims(claims -> claims.remove("iss")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.EmissorInvalido.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.EmissorInvalido.class)
                 .hasMessage("Emissor do token de acesso deve ser %s", TokenAcesso.EMISSOR)
                 .hasCauseInstanceOf(JwtValidationException.class);
         }
@@ -115,7 +114,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claim("iss", "outro.emissor").build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.EmissorInvalido.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.EmissorInvalido.class)
                 .hasMessage("Emissor do token de acesso deve ser %s", TokenAcesso.EMISSOR)
                 .hasCauseInstanceOf(JwtValidationException.class);
         }
@@ -127,7 +126,7 @@ public final class TokenAcessoTest {
             when(jwt.getExpiresAt()).thenReturn(expiraEm);
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Expiracao.Invalida.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Expiracao.Invalida.class)
                 .hasMessage("Expiração do token de acesso deve ser posterior à %s mas é %s", EMITIDO_EM, expiraEm);
         }
 
@@ -136,7 +135,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claims(claims -> claims.remove("exp")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Expiracao.Ausente.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Expiracao.Ausente.class)
                 .hasMessage("Token de acesso deve conter momento de expiração");
         }
 
@@ -146,7 +145,7 @@ public final class TokenAcessoTest {
             when(jwt.getExpiresAt()).thenReturn(EMITIDO_EM);
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Expiracao.Invalida.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Expiracao.Invalida.class)
                 .hasMessage("Expiração do token de acesso deve ser posterior à %s mas é %s", EMITIDO_EM, EMITIDO_EM);
         }
 
@@ -155,7 +154,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().claims(claims -> claims.remove("sub")).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Sujeito.Ausente.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Sujeito.Ausente.class)
                 .hasMessage("Token de acesso deve conter sujeito");
         }
 
@@ -165,7 +164,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().subject(sujeito).build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.Sujeito.Invalido.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.Sujeito.Invalido.class)
                 .hasMessage("Sujeito do token de acesso deve ser um UUID mas é %s", sujeito);
         }
 
@@ -174,7 +173,7 @@ public final class TokenAcessoTest {
             final var jwt = jwt().header("typ", "JWT").build();
 
             assertThatThrownBy(() -> new TokenAcesso(jwt))
-                .isExactlyInstanceOf(InvalidoException.TipoInvalido.class)
+                .isExactlyInstanceOf(TokenAcesso.InvarianteException.TipoInvalido.class)
                 .hasMessage("Tipo do token de acesso deve ser at+jwt ou application/at+jwt")
                 .hasCauseInstanceOf(JwtValidationException.class);
         }
