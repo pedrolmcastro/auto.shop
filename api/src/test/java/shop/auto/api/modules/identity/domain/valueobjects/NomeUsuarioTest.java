@@ -3,9 +3,6 @@ package shop.auto.api.modules.identity.domain.valueobjects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.InvalidoException.CodigosDePontoInvalidosException;
-import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.InvalidoException.MuitoCurtoException;
-import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.InvalidoException.MuitoLongoException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.COMPRIMENTO_MAX;
@@ -14,10 +11,10 @@ import static shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.COM
 public final class NomeUsuarioTest {
     @ParameterizedTest
     @ValueSource(strings = { "A", "Z", "0", "9", " ", "_", "-", ".", "á", "ç", "Ω", "ａ", "😀", "\n", "\0" })
-    void deveRejeitarCodigoDePontoInvalido(final String caractere) {
+    void deveRejeitarCodePointInvalido(final String caractere) {
         final var valor = "a".repeat(COMPRIMENTO_MIN - 1) + caractere;
         assertThatThrownBy(() -> new NomeUsuario(valor))
-            .isExactlyInstanceOf(CodigosDePontoInvalidosException.class)
+            .isExactlyInstanceOf(NomeUsuario.InvarianteException.CodePointsInvalidos.class)
             .hasMessage("Nome do usuário deve conter apenas letras ASCII minúsculas mas contém [%s]", caractere);
     }
 
@@ -26,7 +23,7 @@ public final class NomeUsuarioTest {
     void deveRejeitarNomeMuitoCurto(final int comprimento) {
         final var valor = "a".repeat(comprimento);
         assertThatThrownBy(() -> new NomeUsuario(valor))
-            .isExactlyInstanceOf(MuitoCurtoException.class)
+            .isExactlyInstanceOf(NomeUsuario.InvarianteException.Comprimento.MuitoCurto.class)
             .hasMessage("Nome do usuário deve ter no mínimo 3 caracteres mas tem %d", comprimento);
     }
 
@@ -35,7 +32,7 @@ public final class NomeUsuarioTest {
         final var comprimento = COMPRIMENTO_MAX + 1;
         final var valor = "a".repeat(comprimento);
         assertThatThrownBy(() -> new NomeUsuario(valor))
-            .isExactlyInstanceOf(MuitoLongoException.class)
+            .isExactlyInstanceOf(NomeUsuario.InvarianteException.Comprimento.MuitoLongo.class)
             .hasMessage("Nome do usuário deve ter no máximo 30 caracteres mas tem %d", comprimento);
     }
 

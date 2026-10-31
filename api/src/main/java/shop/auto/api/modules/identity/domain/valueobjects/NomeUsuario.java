@@ -2,7 +2,6 @@ package shop.auto.api.modules.identity.domain.valueobjects;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario.InvalidoException.CodigosDePontoInvalidosException;
 import shop.auto.api.shared.utils.Ascii;
 
 public record NomeUsuario(String valor) {
@@ -10,36 +9,36 @@ public record NomeUsuario(String valor) {
     public static final int COMPRIMENTO_MIN = 3;
 
     public NomeUsuario {
-        final var codigosDePontoInvalidos = valor
+        final var codePointsInvalidos = valor
             .codePoints()
-            .filter(pontoDeCodigo -> !Ascii.eLetraMinuscula(pontoDeCodigo))
+            .filter(codePoints -> !Ascii.eLetraMinuscula(codePoints))
             .distinct()
             .toArray();
 
-        if (codigosDePontoInvalidos.length > 0) {
-            throw new CodigosDePontoInvalidosException(codigosDePontoInvalidos);
+        if (codePointsInvalidos.length > 0) {
+            throw new InvarianteException.CodePointsInvalidos(codePointsInvalidos);
         }
 
         final var comprimento = valor.length();
 
         if (comprimento < COMPRIMENTO_MIN) {
-            throw new InvalidoException.MuitoCurtoException(comprimento);
+            throw new InvarianteException.Comprimento.MuitoCurto(comprimento);
         }
 
         if (comprimento > COMPRIMENTO_MAX) {
-            throw new InvalidoException.MuitoLongoException(comprimento);
+            throw new InvarianteException.Comprimento.MuitoLongo(comprimento);
         }
     }
 
-    public abstract static sealed class InvalidoException extends IllegalArgumentException {
-        public static final class CodigosDePontoInvalidosException extends InvalidoException {
-            private CodigosDePontoInvalidosException(final int[] codigosDePontoInvalidos) {
+    public abstract static sealed class InvarianteException extends IllegalArgumentException {
+        public static final class CodePointsInvalidos extends InvarianteException {
+            private CodePointsInvalidos(final int[] codePointsInvalidos) {
                 super(
                     String
                         .format(
                             "Nome do usuário deve conter apenas letras ASCII minúsculas mas contém %s",
                             Arrays
-                                .stream(codigosDePontoInvalidos)
+                                .stream(codePointsInvalidos)
                                 .sorted()
                                 .mapToObj(Character::toString)
                                 .collect(Collectors.joining(", ", "[", "]"))
@@ -48,33 +47,39 @@ public record NomeUsuario(String valor) {
             }
         }
 
-        public static final class MuitoCurtoException extends InvalidoException {
-            private MuitoCurtoException(final int comprimento) {
-                super(
-                    String
-                        .format(
-                            "Nome do usuário deve ter no mínimo %d caracteres mas tem %d",
-                            COMPRIMENTO_MIN,
-                            comprimento
-                        )
-                );
+        public abstract static sealed class Comprimento extends InvarianteException {
+            public static final class MuitoCurto extends Comprimento {
+                private MuitoCurto(final int comprimento) {
+                    super(
+                        String
+                            .format(
+                                "Nome do usuário deve ter no mínimo %d caracteres mas tem %d",
+                                COMPRIMENTO_MIN,
+                                comprimento
+                            )
+                    );
+                }
+            }
+
+            public static final class MuitoLongo extends Comprimento {
+                private MuitoLongo(final int comprimento) {
+                    super(
+                        String
+                            .format(
+                                "Nome do usuário deve ter no máximo %d caracteres mas tem %d",
+                                COMPRIMENTO_MAX,
+                                comprimento
+                            )
+                    );
+                }
+            }
+
+            private Comprimento(final String mensagem) {
+                super(mensagem);
             }
         }
 
-        public static final class MuitoLongoException extends InvalidoException {
-            private MuitoLongoException(final int comprimento) {
-                super(
-                    String
-                        .format(
-                            "Nome do usuário deve ter no máximo %d caracteres mas tem %d",
-                            COMPRIMENTO_MAX,
-                            comprimento
-                        )
-                );
-            }
-        }
-
-        private InvalidoException(final String mensagem) {
+        private InvarianteException(final String mensagem) {
             super(mensagem);
         }
     }

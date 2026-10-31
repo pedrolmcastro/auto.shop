@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import shop.auto.api.Fixtures;
-import shop.auto.api.modules.identity.domain.resources.Pepper.ComprimentoInvalidoException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,7 +72,7 @@ public final class PepperTest {
             final var valor = new byte[comprimento];
 
             assertThatThrownBy(() -> new Pepper(valor))
-                .isExactlyInstanceOf(ComprimentoInvalidoException.class)
+                .isExactlyInstanceOf(Pepper.InvarianteException.ComprimentoInvalido.class)
                 .hasMessage("Pepper deve ter exatamente 32 bytes mas tem %d", comprimento);
         }
     }

@@ -13,14 +13,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import shop.auto.api.Fixtures;
 import shop.auto.api.modules.identity.domain.resources.Pepper;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.ComprimentoInsuficienteException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.FormatoInvalidoException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.IteracoesInsuficientesException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.MemoriaInsuficienteException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.ParalelismoInvalidoException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.SaltInvalidoException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.VarianteInvalidaException;
-import shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.InvalidaException.VersaoInvalidaException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static shop.auto.api.modules.identity.domain.valueobjects.SenhaProtegida.ARGON2;
@@ -161,7 +153,7 @@ public final class SenhaProtegidaTest {
                 .encodeToString(new byte[comprimento]);
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(ComprimentoInsuficienteException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.ComprimentoInsuficiente.class)
                 .hasMessage("Hash da senha deve ter no mínimo %d bytes mas tem %d", COMPRIMENTO, comprimento);
         }
 
@@ -172,7 +164,7 @@ public final class SenhaProtegidaTest {
             final var valor = HASH.replace("$" + SALT + "$", "$" + salt + "$");
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(SaltInvalidoException.ComprimentoInvalidoException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.Salt.ComprimentoInvalido.class)
                 .hasMessage("Salt da senha deve ter no mínimo %d bytes mas tem %d", COMPRIMENTO_SALT, comprimento);
         }
 
@@ -180,7 +172,7 @@ public final class SenhaProtegidaTest {
         @ValueSource(strings = { "", "invalido", "$2a$12$invalido", "$argon2id$v=19$m=x,t=2,p=1$c2Fsd$aGFzaA" })
         void deveRejeitarFormatoInvalido(final String valor) {
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(FormatoInvalidoException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.FormatoInvalido.class)
                 .hasMessage("Senha deve ser protegida com hash Argon2id")
                 .hasCauseInstanceOf(RuntimeException.class);
         }
@@ -192,7 +184,7 @@ public final class SenhaProtegidaTest {
 
             assertThat(Argon2Function.getInstanceFromHash(valor)).isEqualTo(ARGON2);
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(SaltInvalidoException.FormatoInvalidoException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.Salt.FormatoInvalido.class)
                 .hasMessage("Salt da senha deve estar codificado em Base64")
                 .hasCauseExactlyInstanceOf(IllegalArgumentException.class);
         }
@@ -203,7 +195,7 @@ public final class SenhaProtegidaTest {
             final var valor = HASH.replace("t=" + ITERACOES, "t=" + iteracoes);
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(IteracoesInsuficientesException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.IteracoesInsuficientes.class)
                 .hasMessage("Hash da senha deve usar no mínimo %d iterações mas usa %d", ITERACOES, iteracoes);
         }
 
@@ -213,7 +205,7 @@ public final class SenhaProtegidaTest {
             final var valor = HASH.replace("m=" + MEMORIA, "m=" + memoria);
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(MemoriaInsuficienteException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.MemoriaInsuficiente.class)
                 .hasMessage("Hash da senha deve usar no mínimo %d KiB de memória mas usa %d", MEMORIA, memoria);
         }
 
@@ -223,7 +215,7 @@ public final class SenhaProtegidaTest {
             final var valor = HASH.replace("p=" + PARALELISMO, "p=" + paralelismo);
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(ParalelismoInvalidoException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.ParalelismoInvalido.class)
                 .hasMessage("Hash da senha deve paralelismo %d mas usa %d", PARALELISMO, paralelismo);
         }
 
@@ -237,7 +229,7 @@ public final class SenhaProtegidaTest {
                 );
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(VarianteInvalidaException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.VarianteInvalida.class)
                 .hasMessage(
                     "Hash da senha deve usar a variante Argon2id mas usa Argon2%s",
                     variante.name().toLowerCase(Locale.ROOT)
@@ -250,7 +242,7 @@ public final class SenhaProtegidaTest {
             final var valor = HASH.replace("v=" + VERSAO, "v=" + versao);
 
             assertThatThrownBy(() -> SenhaProtegida.reconstruir(valor))
-                .isExactlyInstanceOf(VersaoInvalidaException.class)
+                .isExactlyInstanceOf(SenhaProtegida.InvarianteException.VersaoInvalida.class)
                 .hasMessage("Hash da senha deve usar a versão %d do Argon2 mas usa %d", VERSAO, versao);
         }
     }

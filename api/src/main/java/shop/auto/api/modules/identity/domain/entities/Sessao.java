@@ -41,20 +41,20 @@ public final class Sessao extends Entity {
         final var agora = relogio.instant();
 
         if (criadaEm.isAfter(agora)) {
-            throw new InvalidaException.CriacaoInvalidaException(agora, criadaEm);
+            throw new InvarianteException.CriacaoInvalida(agora, criadaEm);
         }
 
         if (!expiraEm.isAfter(criadaEm)) {
-            throw new InvalidaException.ExpiracaoInvalidaException(criadaEm, expiraEm);
+            throw new InvarianteException.ExpiracaoInvalida(criadaEm, expiraEm);
         }
 
         if (revogadaEm != null) {
             if (revogadaEm.isBefore(criadaEm)) {
-                throw new InvalidaException.RevogacaoInvalidaException.AntesDaCriacaoException(criadaEm, revogadaEm);
+                throw new InvarianteException.Revogacao.AntesDaCriacao(criadaEm, revogadaEm);
             }
 
             if (!revogadaEm.isBefore(expiraEm)) {
-                throw new InvalidaException.RevogacaoInvalidaException.DepoisDaExpiracaoException(expiraEm, revogadaEm);
+                throw new InvarianteException.Revogacao.DepoisDaExpiracao(expiraEm, revogadaEm);
             }
         }
 
@@ -125,38 +125,38 @@ public final class Sessao extends Entity {
         public record Revogada(Instant revogadaEm) implements Estado {}
     }
 
-    public abstract static sealed class InvalidaException extends IllegalArgumentException {
-        public static final class CriacaoInvalidaException extends InvalidaException {
-            private CriacaoInvalidaException(final Instant agora, final Instant criadaEm) {
+    public abstract static sealed class InvarianteException extends IllegalArgumentException {
+        public static final class CriacaoInvalida extends InvarianteException {
+            private CriacaoInvalida(final Instant agora, final Instant criadaEm) {
                 super(String.format("Criação deve ser anterior ao instante atual %s mas é %s", agora, criadaEm));
             }
         }
 
-        public static final class ExpiracaoInvalidaException extends InvalidaException {
-            private ExpiracaoInvalidaException(final Instant criadaEm, final Instant expiraEm) {
+        public static final class ExpiracaoInvalida extends InvarianteException {
+            private ExpiracaoInvalida(final Instant criadaEm, final Instant expiraEm) {
                 super(String.format("Expiração deve ser posterior à criação %s mas é %s", criadaEm, expiraEm));
             }
         }
 
-        public abstract static sealed class RevogacaoInvalidaException extends InvalidaException {
-            public static final class AntesDaCriacaoException extends RevogacaoInvalidaException {
-                private AntesDaCriacaoException(final Instant criadaEm, final Instant revogadaEm) {
+        public abstract static sealed class Revogacao extends InvarianteException {
+            public static final class AntesDaCriacao extends Revogacao {
+                private AntesDaCriacao(final Instant criadaEm, final Instant revogadaEm) {
                     super(String.format("Revogação deve ser posterior à criação %s mas é %s", criadaEm, revogadaEm));
                 }
             }
 
-            public static final class DepoisDaExpiracaoException extends RevogacaoInvalidaException {
-                private DepoisDaExpiracaoException(final Instant expiraEm, final Instant revogadaEm) {
+            public static final class DepoisDaExpiracao extends Revogacao {
+                private DepoisDaExpiracao(final Instant expiraEm, final Instant revogadaEm) {
                     super(String.format("Revogação deve ser anterior à expiração %s mas é %s", expiraEm, revogadaEm));
                 }
             }
 
-            private RevogacaoInvalidaException(final String mensagem) {
+            private Revogacao(final String mensagem) {
                 super(mensagem);
             }
         }
 
-        private InvalidaException(final String mensagem) {
+        private InvarianteException(final String mensagem) {
             super(mensagem);
         }
     }

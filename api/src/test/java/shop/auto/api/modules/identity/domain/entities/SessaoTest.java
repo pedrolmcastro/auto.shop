@@ -7,10 +7,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import shop.auto.api.modules.identity.domain.entities.Sessao.InvalidaException.CriacaoInvalidaException;
-import shop.auto.api.modules.identity.domain.entities.Sessao.InvalidaException.ExpiracaoInvalidaException;
-import shop.auto.api.modules.identity.domain.entities.Sessao.InvalidaException.RevogacaoInvalidaException.AntesDaCriacaoException;
-import shop.auto.api.modules.identity.domain.entities.Sessao.InvalidaException.RevogacaoInvalidaException.DepoisDaExpiracaoException;
 import shop.auto.api.shared.domain.valueobjects.UUIDv7;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,7 +66,7 @@ public final class SessaoTest {
             final var criadaEm = CRIADA_EM.plusNanos(1);
 
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, criadaEm, EXPIRA_EM, null, RELOGIO))
-                .isExactlyInstanceOf(CriacaoInvalidaException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.CriacaoInvalida.class)
                 .hasMessage("Criação deve ser anterior ao instante atual %s mas é %s", CRIADA_EM, criadaEm);
         }
 
@@ -79,14 +75,14 @@ public final class SessaoTest {
             final var expiraEm = CRIADA_EM.minusNanos(1);
 
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, CRIADA_EM, expiraEm, null, RELOGIO))
-                .isExactlyInstanceOf(ExpiracaoInvalidaException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.ExpiracaoInvalida.class)
                 .hasMessage("Expiração deve ser posterior à criação %s mas é %s", CRIADA_EM, expiraEm);
         }
 
         @Test
         void deveRejeitarExpiracaoNaCriacao() {
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, CRIADA_EM, CRIADA_EM, null, RELOGIO))
-                .isExactlyInstanceOf(ExpiracaoInvalidaException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.ExpiracaoInvalida.class)
                 .hasMessage("Expiração deve ser posterior à criação %s mas é %s", CRIADA_EM, CRIADA_EM);
         }
 
@@ -95,7 +91,7 @@ public final class SessaoTest {
             final var revogadaEm = CRIADA_EM.minusNanos(1);
 
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, CRIADA_EM, EXPIRA_EM, revogadaEm, RELOGIO))
-                .isExactlyInstanceOf(AntesDaCriacaoException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.Revogacao.AntesDaCriacao.class)
                 .hasMessage("Revogação deve ser posterior à criação %s mas é %s", CRIADA_EM, revogadaEm);
         }
 
@@ -105,7 +101,7 @@ public final class SessaoTest {
             final var relogio = InstantSource.fixed(revogadaEm);
 
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, CRIADA_EM, EXPIRA_EM, revogadaEm, relogio))
-                .isExactlyInstanceOf(DepoisDaExpiracaoException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.Revogacao.DepoisDaExpiracao.class)
                 .hasMessage("Revogação deve ser anterior à expiração %s mas é %s", EXPIRA_EM, revogadaEm);
         }
 
@@ -114,7 +110,7 @@ public final class SessaoTest {
             final var relogio = InstantSource.fixed(EXPIRA_EM);
 
             assertThatThrownBy(() -> new Sessao(ID, USUARIO, CRIADA_EM, EXPIRA_EM, EXPIRA_EM, relogio))
-                .isExactlyInstanceOf(DepoisDaExpiracaoException.class)
+                .isExactlyInstanceOf(Sessao.InvarianteException.Revogacao.DepoisDaExpiracao.class)
                 .hasMessage("Revogação deve ser anterior à expiração %s mas é %s", EXPIRA_EM, EXPIRA_EM);
         }
 
