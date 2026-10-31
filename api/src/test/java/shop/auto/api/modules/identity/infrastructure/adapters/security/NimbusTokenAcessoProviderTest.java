@@ -12,6 +12,7 @@ import shop.auto.api.modules.identity.domain.entities.Sessao;
 import shop.auto.api.modules.identity.domain.valueobjects.TokenAcesso;
 import shop.auto.api.shared.domain.valueobjects.UUIDv7;
 import static org.assertj.core.api.Assertions.assertThat;
+import static shop.auto.api.Fixtures.refreshTokenHash;
 import static shop.auto.api.modules.identity.infrastructure.adapters.security.NimbusTokenAcessoProvider.DURACAO;
 
 public final class NimbusTokenAcessoProviderTest {
@@ -20,7 +21,7 @@ public final class NimbusTokenAcessoProviderTest {
 
     @Test
     void deveEmitirTokenComExpiraEmDaDuracao() {
-        final var sessao = Sessao.criar(UUIDv7.criar(), RELOGIO);
+        final var sessao = Sessao.criar(UUIDv7.criar(), refreshTokenHash(), RELOGIO);
         final var provider = new NimbusTokenAcessoProvider(encoder(), RELOGIO);
         final var emitidoEm = AGORA.truncatedTo(ChronoUnit.SECONDS);
 
@@ -41,7 +42,15 @@ public final class NimbusTokenAcessoProviderTest {
     @Test
     void deveEmitirTokenComExpiraEmDaSessao() {
         final var expiraEm = AGORA.plusSeconds(30);
-        final var sessao = new Sessao(UUIDv7.criar(), UUIDv7.criar(), AGORA, expiraEm, null, RELOGIO);
+        final var sessao = new Sessao(
+            UUIDv7.criar(),
+            UUIDv7.criar(),
+            refreshTokenHash(),
+            AGORA,
+            expiraEm,
+            null,
+            RELOGIO
+        );
         final var provider = new NimbusTokenAcessoProvider(encoder(), RELOGIO);
 
         assertThat(provider.emitir(sessao))
@@ -53,7 +62,15 @@ public final class NimbusTokenAcessoProviderTest {
 
     @Test
     void deveRejeitarSessaoExpirada() {
-        final var sessao = new Sessao(UUIDv7.criar(), UUIDv7.criar(), AGORA.minusSeconds(30), AGORA, null, RELOGIO);
+        final var sessao = new Sessao(
+            UUIDv7.criar(),
+            UUIDv7.criar(),
+            refreshTokenHash(),
+            AGORA.minusSeconds(30),
+            AGORA,
+            null,
+            RELOGIO
+        );
         final var provider = new NimbusTokenAcessoProvider(encoder(), RELOGIO);
 
         assertThat(provider.emitir(sessao)).isEqualTo(ResultadoEmissao.Erro.SESSAO_INATIVA);
@@ -61,7 +78,7 @@ public final class NimbusTokenAcessoProviderTest {
 
     @Test
     void deveRejeitarSessaoRevogada() {
-        final var sessao = Sessao.criar(UUIDv7.criar(), RELOGIO);
+        final var sessao = Sessao.criar(UUIDv7.criar(), refreshTokenHash(), RELOGIO);
         sessao.revogar();
         final var provider = new NimbusTokenAcessoProvider(encoder(), RELOGIO);
 
@@ -70,7 +87,15 @@ public final class NimbusTokenAcessoProviderTest {
 
     @Test
     void deveRejeitarTempoInsuficiente() {
-        final var sessao = new Sessao(UUIDv7.criar(), UUIDv7.criar(), AGORA, AGORA.plusNanos(1), null, RELOGIO);
+        final var sessao = new Sessao(
+            UUIDv7.criar(),
+            UUIDv7.criar(),
+            refreshTokenHash(),
+            AGORA,
+            AGORA.plusNanos(1),
+            null,
+            RELOGIO
+        );
         final var provider = new NimbusTokenAcessoProvider(encoder(), RELOGIO);
 
         assertThat(provider.emitir(sessao)).isEqualTo(ResultadoEmissao.Erro.TEMPO_INSUFICIENTE);
@@ -79,7 +104,7 @@ public final class NimbusTokenAcessoProviderTest {
     @Test
     void deveUsarRelogioDoSistemaPorPadrao() {
         final var antes = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        final var sessao = Sessao.criar(UUIDv7.criar());
+        final var sessao = Sessao.criar(UUIDv7.criar(), refreshTokenHash());
         final var provider = new NimbusTokenAcessoProvider(encoder());
 
         assertThat(provider.emitir(sessao))

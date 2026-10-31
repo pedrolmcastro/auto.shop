@@ -171,8 +171,9 @@ public final class ArchitectureTest {
                 "acessar membro @VisibleForRepository fora dos adapters de persistence",
                 (JavaAccess<?> chamada) -> {
                     return chamada.getTarget().isAnnotatedWith(VisibleForRepository.class)
-                        && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
-                        && !resideInAPackage("..infrastructure.adapters.persistence..").test(chamada.getOriginOwner());
+                           && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
+                           && !resideInAPackage("..infrastructure.adapters.persistence..")
+                               .test(chamada.getOriginOwner());
                 }
             )
         )
@@ -185,7 +186,7 @@ public final class ArchitectureTest {
             describe(
                 "acessar membro marcado @VisibleForTesting de outra classe",
                 (JavaAccess<?> chamada) -> chamada.getTarget().isAnnotatedWith(VisibleForTesting.class)
-                    && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
+                                           && !chamada.getOriginOwner().equals(chamada.getTargetOwner())
             )
         )
         .because("Métodos @VisibleForTesting devem ser reservados à testes");

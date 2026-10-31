@@ -3,12 +3,18 @@ package shop.auto.api;
 import shop.auto.api.modules.identity.application.ports.repositories.UsuarioRepository;
 import shop.auto.api.modules.identity.domain.entities.Usuario;
 import shop.auto.api.modules.identity.domain.valueobjects.NomeUsuario;
+import shop.auto.api.modules.identity.domain.valueobjects.RefreshToken;
+import shop.auto.api.modules.identity.domain.valueobjects.RefreshTokenHash;
 
 public final class IntegrationFixtures {
     private final UsuarioRepository usuarios;
 
     public IntegrationFixtures(final UsuarioRepository usuarios) {
         this.usuarios = usuarios;
+    }
+
+    public static RefreshTokenHash refreshTokenHash() {
+        return RefreshTokenHash.hash(RefreshToken.criar());
     }
 
     public Usuario admin() {
