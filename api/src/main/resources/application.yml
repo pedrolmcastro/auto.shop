@@ -1,5 +1,8 @@
 ---
 identity:
+  jwt:
+    private-key-file: ${JWT_PRIVATE_KEY_FILE:secrets/jwt-private.pem}
+    public-key-file: ${JWT_PUBLIC_KEY_FILE:secrets/jwt-public.pem}
   pepper:
     file: ${PEPPER_FILE:secrets/pepper.bin}
 spring:

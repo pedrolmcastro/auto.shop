@@ -8,8 +8,12 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.flywaydb.core.api.migration.JavaMigration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import shop.auto.api.shared.utils.VisibleForRepository;
 import static com.tngtech.archunit.base.DescribedPredicate.describe;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.equivalentTo;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideOutsideOfPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -114,9 +118,14 @@ public final class ArchitectureTest {
         .and()
         .doNotHaveFullyQualifiedName(Application.class.getName())
         .should()
-        .dependOnClassesThat()
-        .resideInAPackage("org.springframework..")
-        .because("Spring deve ser usado apenas na camada de infrastructure e na Application");
+        .dependOnClassesThat(
+            resideInAPackage("org.springframework..")
+                .and(resideOutsideOfPackage("org.springframework.security.oauth2.jwt.."))
+                .and(equivalentTo(OAuth2TokenValidatorResult.class).negate())
+                .and(equivalentTo(OAuth2Error.class).negate())
+                .and(equivalentTo(SignatureAlgorithm.class).negate())
+        )
+        .because("Spring deve ser usado apenas na infrastructure e na Application, exceto a biblioteca JWT");
 
     @ArchTest
     static final ArchRule SUBCAMADAS_DE_DOMAIN_DEVEM_RESPEITAR_CLEAN_ARCHITECTURE = layeredArchitecture()
