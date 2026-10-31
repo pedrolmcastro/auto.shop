@@ -82,6 +82,8 @@ jobs:
             --write-out '%{http_code}' \
             "http://127.0.0.1:${PORT}/")
           test "$status" -ge 200 && test "$status" -lt 500
+          docker compose exec --user app -T app test -r /app/secrets/jwt-private.pem
+          docker compose exec --user app -T app test -r /app/secrets/jwt-public.pem
           docker compose exec --user app -T app test -r /app/secrets/pepper.bin
         timeout-minutes: 2
       - if: ${{ always() }}
